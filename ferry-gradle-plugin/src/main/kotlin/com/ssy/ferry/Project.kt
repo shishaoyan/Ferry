@@ -1,4 +1,4 @@
-package com.ssy.ferry.gradle
+package com.ssy.ferry
 
 import com.android.build.gradle.BaseExtension
 import com.android.repository.Revision

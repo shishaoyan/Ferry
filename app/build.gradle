@@ -6,7 +6,7 @@ apply plugin: 'kotlin-android-extensions'
 
 apply plugin: 'kotlin-kapt'
 
-//apply plugin: 'com.ssy.ferry.FerryPlugin'
+apply plugin: 'com.ssy.ferry'
 android {
     compileSdkVersion 28
     defaultConfig {
@@ -34,4 +34,5 @@ dependencies {
     implementation 'androidx.constraintlayout:constraintlayout:1.1.3'
     kapt "com.google.auto.service:auto-service:1.0-rc4"
     compileOnly "com.google.auto.service:auto-service:1.0-rc4"
+
 }

@@ -10,6 +10,7 @@ import com.ssy.ferry.VariantProcessor
 class ListPermissionVariantProcessor : VariantProcessor {
     override fun process(variant: BaseVariant) {
         Log.e("haha", "ListPermissionVariantProcessor --->")
+        println("---------++++++++++++++++++++++++--------------------")
     }
 
 }
