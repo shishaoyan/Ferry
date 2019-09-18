@@ -1,0 +1,18 @@
+apply from: '../gradle/ferry.gradle'
+apply plugin: 'maven'
+dependencies {
+    compileOnly 'com.android.tools.build:gradle:3.5.0'
+    testCompileOnly 'com.android.tools.build:gradle:3.5.0'
+}
+uploadArchives {
+    repositories {
+        mavenDeployer {
+            //设置插件的GAV参数
+            pom.groupId = 'com.ssy.ferry'
+            pom.version = '1.0'
+            //文件发布到下面目录
+            repository(url: uri('../repo'))
+        }
+    }
+}
+

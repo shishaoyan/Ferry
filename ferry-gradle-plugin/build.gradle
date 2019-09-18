@@ -1,0 +1,9 @@
+apply from:'../gradle/ferry.gradle'
+dependencies {
+    kapt 'com.google.auto.service:auto-service:1.0-rc4'
+    compileOnly 'com.android.tools.build:gradle:3.5.0'
+    implementation gradleApi()
+    implementation localGroovy()
+
+}
+
