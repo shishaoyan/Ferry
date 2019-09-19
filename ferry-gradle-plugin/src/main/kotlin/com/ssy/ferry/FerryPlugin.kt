@@ -5,14 +5,17 @@ import com.android.build.gradle.LibraryExtension
 import com.ssy.ferry.VariantProcessor
 import org.gradle.api.Plugin
 import org.gradle.api.Project
+import org.gradle.api.Task
 import java.util.*
 
 class FerryPlugin : Plugin<Project> {
     override fun apply(project: Project) {
         when {
 
+
+
             project.plugins.hasPlugin("com.android.application") -> project.getAndroid<AppExtension>().let { android ->
-               // android.registerTransform(FerryAppTransform())
+                // android.registerTransform(FerryAppTransform())
                 project.afterEvaluate {
                     println("********************************")
                     println("FerryPlugin application:  hasPlugin")
@@ -20,10 +23,23 @@ class FerryPlugin : Plugin<Project> {
                     ServiceLoader.load(VariantProcessor::class.java, javaClass.classLoader).toList()
                         .let { processors ->
                             android.applicationVariants.forEach { variant ->
-                                println("------------------applicationVariants.forEach --------------"+variant.name)
-                                processors.forEach { processor ->
-                                    println("------------------processors.forEach --------------")
-                                    processor.process(variant)
+
+                                if (variant.name == "debug") {
+                                    processors.forEach { processor ->
+
+
+                                        project.tasks.create(
+                                            "listpermmisonstask",
+                                            ListPermissionTask::class.java
+                                        ) {
+                                            it.variant = variant
+                                            it.outputs.upToDateWhen { false }
+                                        }.also {
+                                          var assemble =  project.tasks.findByName("clean") as Task
+                                            assemble.dependsOn(it)
+                                        }
+                                        processor.process(variant)
+                                    }
                                 }
                             }
                         }
@@ -31,7 +47,7 @@ class FerryPlugin : Plugin<Project> {
                 }
             }
             project.plugins.hasPlugin("com.android.library") -> project.getAndroid<LibraryExtension>().let { android ->
-              //  android.registerTransform(FerryLibTransform())
+                //  android.registerTransform(FerryLibTransform())
                 project.afterEvaluate {
                     println("FerryPlugin library:  hasPlugin")
                     ServiceLoader.load(VariantProcessor::class.java, javaClass.classLoader).toList()
