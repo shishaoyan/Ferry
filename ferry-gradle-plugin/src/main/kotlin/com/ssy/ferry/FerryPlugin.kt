@@ -13,12 +13,13 @@ class FerryPlugin : Plugin<Project> {
         when {
 
 
-
             project.plugins.hasPlugin("com.android.application") -> project.getAndroid<AppExtension>().let { android ->
                 // android.registerTransform(FerryAppTransform())
                 project.afterEvaluate {
-                    println("********************************")
-                    println("FerryPlugin application:  hasPlugin")
+                    println("*********************************************")
+                    println("********* --                    -- **********")
+                    println("********* --       Ferry        -- **********")
+
 
                     ServiceLoader.load(VariantProcessor::class.java, javaClass.classLoader).toList()
                         .let { processors ->
@@ -27,23 +28,13 @@ class FerryPlugin : Plugin<Project> {
                                 if (variant.name == "debug") {
                                     processors.forEach { processor ->
 
-
-                                        project.tasks.create(
-                                            "listpermmisonstask",
-                                            ListPermissionTask::class.java
-                                        ) {
-                                            it.variant = variant
-                                            it.outputs.upToDateWhen { false }
-                                        }.also {
-                                          var assemble =  project.tasks.findByName("clean") as Task
-                                            assemble.dependsOn(it)
-                                        }
                                         processor.process(variant)
                                     }
                                 }
                             }
                         }
-                    println("********************************")
+                    println("********* --                    -- **********")
+                    println("*********************************************")
                 }
             }
             project.plugins.hasPlugin("com.android.library") -> project.getAndroid<LibraryExtension>().let { android ->

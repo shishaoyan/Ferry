@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="com.ssy.mylibrary">
+<uses-permission android:name="android.permission.WRITE_VOICEMAIL"></uses-permission>
+    <application>
+        <activity android:name=".MainActivity"></activity>
+    </application>
+
+</manifest>

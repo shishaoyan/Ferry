@@ -13,6 +13,7 @@
             <option value="$PROJECT_DIR$/ferry-gradle-plugin" />
             <option value="$PROJECT_DIR$/ferry-task-list-permission" />
             <option value="$PROJECT_DIR$/ferry-task-spi" />
+            <option value="$PROJECT_DIR$/mylibrary" />
           </set>
         </option>
         <option name="resolveModulePerSourceSet" value="false" />
