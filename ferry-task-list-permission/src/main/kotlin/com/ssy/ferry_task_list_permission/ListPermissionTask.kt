@@ -31,15 +31,15 @@ internal open class ListPermissionTask : DefaultTask() {
         println("***** -- projectDir/permissions.json -- *****")
         println("*********************************************")
 
-        var map = HashMap<String, List<String>>()
-        var checkManifest = variant.checkManifestProvider.get() as CheckManifest
+        val map = HashMap<String, List<String>>()
+        val checkManifest = variant.checkManifestProvider.get() as CheckManifest
         //获取 app module 的权限
         map.put("app module", matchPerssion(checkManifest.manifest.readText()))
 
-        var baseVariantData = (variant as ApplicationVariantImpl).variantData
+        val baseVariantData = (variant as ApplicationVariantImpl).variantData
         //获取 app aar 的权限
 //
-        var manifests = baseVariantData.scope.getArtifactCollection(
+        val manifests = baseVariantData.scope.getArtifactCollection(
             AndroidArtifacts.ConsumedConfigType.RUNTIME_CLASSPATH,
             AndroidArtifacts.ArtifactScope.ALL, AndroidArtifacts.ArtifactType.MANIFEST
         )

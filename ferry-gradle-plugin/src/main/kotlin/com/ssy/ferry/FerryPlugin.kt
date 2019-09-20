@@ -14,7 +14,7 @@ class FerryPlugin : Plugin<Project> {
 
 
             project.plugins.hasPlugin("com.android.application") -> project.getAndroid<AppExtension>().let { android ->
-                // android.registerTransform(FerryAppTransform())
+               android.registerTransform(FerryAppTransform())
                 project.afterEvaluate {
                     println("*********************************************")
                     println("********* --                    -- **********")
@@ -38,7 +38,7 @@ class FerryPlugin : Plugin<Project> {
                 }
             }
             project.plugins.hasPlugin("com.android.library") -> project.getAndroid<LibraryExtension>().let { android ->
-                //  android.registerTransform(FerryLibTransform())
+                 android.registerTransform(FerryLibTransform())
                 project.afterEvaluate {
                     println("FerryPlugin library:  hasPlugin")
                     ServiceLoader.load(VariantProcessor::class.java, javaClass.classLoader).toList()

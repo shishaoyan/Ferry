@@ -2,6 +2,7 @@ apply from:'../gradle/ferry.gradle'
 apply plugin: 'maven'
 dependencies {
     kapt 'com.google.auto.service:auto-service:1.0-rc4'
+    compileOnly 'com.google.auto.service:auto-service:1.0-rc4'
     compileOnly 'com.android.tools.build:gradle:3.5.0'
     implementation 'com.ssy.ferry:ferry-task-spi:1.0.0'
     implementation gradleApi()
