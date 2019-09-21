@@ -12,9 +12,11 @@ class FerryPlugin : Plugin<Project> {
     override fun apply(project: Project) {
         when {
 
-
             project.plugins.hasPlugin("com.android.application") -> project.getAndroid<AppExtension>().let { android ->
                android.registerTransform(FerryAppTransform())
+
+
+                println("*******************             registerTransform                       **************************")
                 project.afterEvaluate {
                     println("*********************************************")
                     println("********* --                    -- **********")

@@ -22,7 +22,7 @@ class ListPermissionVariantProcessor : VariantProcessor {
             it.variant = variant
             it.outputs.upToDateWhen { false }
         }.also {
-            var assemble =  tasks.findByName("clean") as Task
+            var assemble =  tasks.findByName("assemble"+variant.name) as Task
             assemble.dependsOn(it)
         }
 

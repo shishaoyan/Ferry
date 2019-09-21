@@ -3,11 +3,12 @@ package com.ssy.ferry
 import org.objectweb.asm.ClassVisitor
 import org.objectweb.asm.MethodVisitor
 import org.objectweb.asm.Opcodes
+import org.objectweb.asm.Type
 import org.objectweb.asm.commons.AdviceAdapter
 
-class TimeClassVisitor(cw: ClassVisitor) : ClassVisitor(Opcodes.ASM6, cw) {
+class TimeClassVisitor(verson:Int,cw: ClassVisitor) : ClassVisitor(verson, cw) {
     internal lateinit var className: String
-
+    private var startTimeIndex = 0
 
     override fun visit(
         version: Int,
@@ -15,24 +16,30 @@ class TimeClassVisitor(cw: ClassVisitor) : ClassVisitor(Opcodes.ASM6, cw) {
         name: String,
         signature: String?,
         superName: String?,
-        interfaces: Array<String>?
+        interfaces: Array<out String>?
     ) {
         super.visit(version, access, name, signature, superName, interfaces)
         className = name
+
     }
 
     override fun visitMethod(
         access: Int,
         name: String,
         desc: String,
-        signature: String,
-        exceptions: Array<String>
+        signature: String?,
+        exceptions: Array<out String>?
     ): MethodVisitor {
+
+
         var mv = cv.visitMethod(access, name, desc, signature, exceptions)
-        return mv
+
         mv = object : AdviceAdapter(Opcodes.ASM5, mv, access, name, desc) {
 
             override fun onMethodEnter() {
+
+
+                println("--------------   onMethodEnter:"+name)
                 mv.visitLdcInsn(name)
                 mv.visitLdcInsn(className)
                 mv.visitLdcInsn(desc)
@@ -56,6 +63,7 @@ class TimeClassVisitor(cw: ClassVisitor) : ClassVisitor(Opcodes.ASM6, cw) {
                     "(Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;)V",
                     false
                 )
+                println("--------------   onMethodExit")
             }
         }
 

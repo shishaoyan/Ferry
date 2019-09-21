@@ -19,7 +19,7 @@ buildscript {
         classpath 'com.jfrog.bintray.gradle:gradle-bintray-plugin:1.7.3'
 
 
-        classpath 'com.ssy.ferry:ferry-task-list-permission:1.0.3'
+       // classpath 'com.ssy.ferry:ferry-task-list-permission:1.0.3'
         classpath 'com.ssy.ferry:ferry-gradle-plugin:1.0.1'
     }
 }
@@ -35,3 +35,5 @@ allprojects {
 task clean(type: Delete) {
     delete rootProject.buildDir
 }
+
+
