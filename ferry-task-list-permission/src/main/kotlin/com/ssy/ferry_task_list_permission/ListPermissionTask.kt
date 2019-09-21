@@ -33,8 +33,11 @@ internal open class ListPermissionTask : DefaultTask() {
 
         val map = HashMap<String, List<String>>()
         val checkManifest = variant.checkManifestProvider.get() as CheckManifest
-        //获取 app module 的权限
-        map.put("app module", matchPerssion(checkManifest.manifest.readText()))
+        if (checkManifest.manifest != null) {
+            //获取 app module 的权限
+            map.put("app module", matchPerssion(checkManifest.manifest.readText()))
+        }
+
 
         val baseVariantData = (variant as ApplicationVariantImpl).variantData
         //获取 app aar 的权限
@@ -47,7 +50,11 @@ internal open class ListPermissionTask : DefaultTask() {
         val artifacts = manifests.artifacts
 
         for (artifact in artifacts) {
-            if (!map.containsKey(getArtifactName(artifact)) && matchPerssion(artifact.file.readText()).size > 0) {
+
+            if (artifact.file != null && !map.containsKey(getArtifactName(artifact)) && matchPerssion(
+                    artifact.file.readText()
+                ).isNotEmpty()
+            ) {
                 map.put(getArtifactName(artifact), matchPerssion(artifact.file.readText()))
             }
         }
@@ -91,12 +98,12 @@ internal open class ListPermissionTask : DefaultTask() {
 
     fun writePermmisonToFile(map: HashMap<String, List<String>>) {
         var jsonFile = File("${project.parent?.projectDir}/permissions.json")
-        if (jsonFile.exists()){
+        if (jsonFile.exists()) {
             jsonFile.delete()
         }
         jsonFile.createNewFile()
         val json = JsonOutput.toJson(map)
-        jsonFile.writeText(JsonOutput.prettyPrint(json),Charsets.UTF_8)
+        jsonFile.writeText(JsonOutput.prettyPrint(json), Charsets.UTF_8)
         println(JsonOutput.prettyPrint(json))
 
     }
