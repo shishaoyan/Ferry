@@ -9,6 +9,7 @@ import org.objectweb.asm.ClassWriter
 import org.objectweb.asm.Opcodes.ASM5
 import java.io.File
 import java.io.FileOutputStream
+import java.util.*
 
 abstract class FerryTransform2 : Transform() {
 
@@ -49,6 +50,7 @@ abstract class FerryTransform2 : Transform() {
                 }
                 FileUtils.copyDirectory(dirInput.file, dest)
 
+
             }
 
 
@@ -69,29 +71,23 @@ abstract class FerryTransform2 : Transform() {
                     && !filePath.contains("TimeCache.class")
                 ) {
                     val name = file.name
-                    val cr = ClassReader(file.readBytes())
-                    val cw = ClassWriter(cr, ClassWriter.COMPUTE_FRAMES)
-//                            ServiceLoader.load(ClassTransformer::class.java, javaClass.classLoader)
-//                                .toList()
-//                                .forEach { classTransformer ->
-//                                    val classVisitor = classTransformer.transform(cw)
-//                                    cr.accept(classVisitor, ClassReader.EXPAND_FRAMES)
-//                                 //   println("********* --    forEach   classTransformer        -- **********     "+file.name)
-//                                    val fos = FileOutputStream(
-//                                        file.parentFile.absolutePath + File.separator + name
-//                                    )
-//                                    fos.write(cw.toByteArray())
-//                                    fos.flush()
-//
-//                                }
-                    val classVisitor = TimeClassVisitor(ASM5, cw)
-                    cr.accept(classVisitor, ClassReader.EXPAND_FRAMES)
-                    val fos = FileOutputStream(
-                        file.parentFile.absolutePath + File.separator + name
-                    )
-                    println("（）（）（）（）（）（）（） fos"+file.parentFile.absolutePath + File.separator + name)
-                    fos.write(cw.toByteArray())
-                    fos.flush()
+
+                    ServiceLoader.load(ClassTransformer::class.java, javaClass.classLoader)
+                        .toList()
+                        .forEach { classTransformer ->
+                            val cr = ClassReader(file.readBytes())
+                            val cw = ClassWriter(cr, ClassWriter.COMPUTE_FRAMES)
+
+                            val classVisitor = classTransformer.transform(cw)
+                            cr.accept(classVisitor, ClassReader.EXPAND_FRAMES)
+                            val fos = FileOutputStream(
+                                file.parentFile.absolutePath + File.separator + name
+                            )
+                            println("（）（）（）（）（）（）（） fos" + file.parentFile.absolutePath + File.separator + name)
+                            fos.write(cw.toByteArray())
+                            fos.flush()
+                        }
+
 
 
                 }

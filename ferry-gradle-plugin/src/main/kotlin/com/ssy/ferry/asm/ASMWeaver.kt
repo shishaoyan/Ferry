@@ -3,7 +3,6 @@ package com.ssy.ferry.asm
 import com.argusapm.gradle.internal.concurrent.ITask
 import com.argusapm.gradle.internal.concurrent.ThreadPool
 import com.argusapm.gradle.internal.utils.ZipFileUtils
-import com.ssy.ferry.TimeClassVisitor
 import com.ssy.ferry.utils.TypeUtil
 import org.apache.commons.io.FileUtils
 import org.objectweb.asm.ClassReader
@@ -44,7 +43,7 @@ class ASMWeaver {
         val classReader = ClassReader(inputStream)
         val classWriter = ExtendClassWriter(ClassWriter.COMPUTE_MAXS)
         var classWriterWrapper: ClassVisitor = classWriter
-        classWriterWrapper = TimeClassVisitor(Opcodes.ASM5, classWriterWrapper)
+       // classWriterWrapper = TimeClassVisitor(Opcodes.ASM5, classWriterWrapper)
 
         classReader.accept(classWriterWrapper, ClassReader.EXPAND_FRAMES)
         return classWriter.toByteArray()

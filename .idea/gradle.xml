@@ -13,6 +13,8 @@
             <option value="$PROJECT_DIR$/ferry-gradle-plugin" />
             <option value="$PROJECT_DIR$/ferry-task-list-permission" />
             <option value="$PROJECT_DIR$/ferry-task-spi" />
+            <option value="$PROJECT_DIR$/ferry-transform-spi" />
+            <option value="$PROJECT_DIR$/ferry-transform-trace" />
             <option value="$PROJECT_DIR$/mylibrary" />
           </set>
         </option>
