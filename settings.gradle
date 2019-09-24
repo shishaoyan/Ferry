@@ -1,2 +1,2 @@
-include ':app', ':ferry-task-spi', ':ferry-task-list-permission', ':ferry-gradle-plugin', ':buildSrc', ':mylibrary', ':ferry-transform-trace', ':ferry-transform-spi'
+include ':app', ':ferry-task-spi', ':ferry-task-list-permission', ':ferry-gradle-plugin', ':buildSrc', ':mylibrary', ':ferry-transform-trace', ':ferry-transform-spi', ':ferry-monitor'
 rootProject.name='My Application'
