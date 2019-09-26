@@ -15,13 +15,22 @@ class MappingCollector : MappingProcessor {
         private val DEFAULT_CAPACITY = 2000
     }
 
-
+    /**
+     * 把【原始和混淆后】、【混淆后和原始】的class 以及 包名 都一一对应
+     */
     override fun processClassMapping(className: String, newClassName: String): Boolean {
-
-
-        return false;
+        mRawObfuscatedClassMap.put(className, newClassName)
+        mObfuscatedRawClassMap.put(newClassName, className)
+        mRawObfuscatedPackageMap.put(
+            className.substring(0, className.lastIndexOf(".")),
+            className.substring(0, newClassName.lastIndexOf("."))
+        )
+        return true
     }
 
+    /**
+     * 对方法进行关系对应
+     */
     override fun processMethodMapping(
         className: String,
         methodReturnTpye: String,
@@ -30,6 +39,8 @@ class MappingCollector : MappingProcessor {
         newClassName: String,
         newMethodName: String
     ) {
+
+
     }
 
 }

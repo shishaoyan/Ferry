@@ -34,16 +34,16 @@ class MappingReader {
     }
 
     fun read(mappingProcessor: MappingProcessor) {
-        val reader = LineNumberReader(BufferedReader(FileReader(proguardMappingFile)))
+        val reader = LineNumberReader(BufferedReader(FileReader(proguardMappingFile) as Reader?))
         try {
-            var className: String = null
+            var className: String? = null
             while (true) {
                 val line = reader.readLine()
-                if (!line.startsWith("#")){
-                    if (line.endsWith(SPLIP)){
-                        className = parceClassMapping(line,mappingProcessor)
-                    }else if (className!=null){
-                        parceClassMapping(className,line,mappingProcessor)
+                if (!line.startsWith("#")) {
+                    if (line.endsWith(SPLIP)) {//如果是：这里可以pick出 className
+                        className = parceClassMapping(line, mappingProcessor)
+                    } else if (className != null) {//如果不是 那就去解析里面的方法
+                        parceClassMapping(className, line, mappingProcessor)
                     }
                 }
 
@@ -55,13 +55,37 @@ class MappingReader {
 
     }
 
-    private fun parceClassMapping(line: String?, mappingProcessor: MappingProcessor): String {
+    private fun parceClassMapping(line: String?, mappingProcessor: MappingProcessor): String? {
+        var leftInndex = line?.indexOf(ARROW) as Int
+        val className = line?.substring(0, leftInndex).trim()
+        var offset = 2
+        var rightInndex = line?.indexOf(SPLIP, leftInndex + offset)
+        if (rightInndex < 0) {
+            return null
+        }
+        val newClassName = line?.substring(leftInndex + offset, rightInndex).trim()
 
+        var ret = mappingProcessor.processClassMapping(className, newClassName)
+        return if (ret) className else null
 
 
     }
-    private fun parceClassMapping(className:String?,line: String?, mappingProcessor: MappingProcessor): String {
 
+    /** 解析 class 里面的 方法
+     *                         ___ ___ -> ___
+     *                         ___:___:___ ___(___) -> ___
+     *                         ___:___:___ ___(___):___ -> ___
+     *                         ___:___:___ ___(___):___:___ -> ___
+     *
+     */
+    private fun parceClassMapping(
+        className: String?,
+        line: String?,
+        mappingProcessor: MappingProcessor
+    ): String? {
+        val leftIndex1 = line.indexOf(SPLIP)
+
+        return null
     }
 
 }
