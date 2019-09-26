@@ -19,9 +19,9 @@ buildscript {
         classpath 'com.jfrog.bintray.gradle:gradle-bintray-plugin:1.7.3'
 
 
-      //  classpath 'com.ssy.ferry:ferry-task-list-permission:1.0.8'
-      //  classpath 'com.ssy.ferry:ferry-transform-trace:1.0.1'
-        classpath 'com.ssy.ferry:ferry-transform-toast:1.0.0'
+        //  classpath 'com.ssy.ferry:ferry-task-list-permission:1.0.8'
+        //  classpath 'com.ssy.ferry:ferry-transform-trace:1.0.1'
+        classpath 'com.ssy.ferry:ferry-transform-toast:1.0.1'
         classpath 'com.ssy.ferry:ferry-gradle-plugin:1.0.1'
     }
 }

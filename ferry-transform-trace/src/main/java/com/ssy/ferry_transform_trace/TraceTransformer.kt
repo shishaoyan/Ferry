@@ -9,7 +9,7 @@ import org.objectweb.asm.Opcodes
 @AutoService(ClassTransformer::class)
 class TraceTransformer : ClassTransformer {
     override fun transform(cw: ClassVisitor): ClassVisitor {
-        return TimeClassVisitor(Opcodes.ASM6,cw)
+        return TraceClassVisitor(Opcodes.ASM6,cw)
     }
 
 }

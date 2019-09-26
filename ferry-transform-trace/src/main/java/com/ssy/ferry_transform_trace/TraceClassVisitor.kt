@@ -5,7 +5,7 @@ import org.objectweb.asm.MethodVisitor
 import org.objectweb.asm.Opcodes
 import org.objectweb.asm.commons.AdviceAdapter
 
-class TimeClassVisitor(verson: Int, cw: ClassVisitor) : ClassVisitor(verson, cw) {
+class TraceClassVisitor(verson: Int, cw: ClassVisitor) : ClassVisitor(verson, cw) {
     internal lateinit var className: String
     private var startTimeIndex = 0
     private var mVerson = verson
@@ -39,27 +39,27 @@ class TimeClassVisitor(verson: Int, cw: ClassVisitor) : ClassVisitor(verson, cw)
 
 
                 println("--------------   onMethodEnter:" + name)
-                mv.visitLdcInsn(name)
-                mv.visitLdcInsn(className)
-                mv.visitLdcInsn(desc)
+//                mv.visitLdcInsn(name)
+//                mv.visitLdcInsn(className)
+//                mv.visitLdcInsn(desc)
                 mv.visitMethodInsn(
                     Opcodes.INVOKESTATIC,
-                    "com/ssy/ferry/TimeCache",
+                    "com/ssy/ferry/trace/AppMethodBeat",
                     "i",
-                    "(Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;)V",
+                    "(I)V",
                     false
                 )
             }
 
             override fun onMethodExit(opcode: Int) {
-                mv.visitLdcInsn(name)
-                mv.visitLdcInsn(className)
-                mv.visitLdcInsn(desc)
+//                mv.visitLdcInsn(name)
+//                mv.visitLdcInsn(className)
+//                mv.visitLdcInsn(desc)
                 mv.visitMethodInsn(
                     Opcodes.INVOKESTATIC,
-                    "com/ssy/ferry/TimeCache",
+                    "com/ssy/ferry/trace/AppMethodBeat",
                     "o",
-                    "(Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;)V",
+                    "(I)V",
                     false
                 )
                 println("--------------   onMethodExit")
