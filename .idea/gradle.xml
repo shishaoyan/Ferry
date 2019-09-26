@@ -10,11 +10,15 @@
             <option value="$PROJECT_DIR$" />
             <option value="$PROJECT_DIR$/app" />
             <option value="$PROJECT_DIR$/buildSrc" />
+            <option value="$PROJECT_DIR$/ferry-android-api" />
+            <option value="$PROJECT_DIR$/ferry-android-instrument" />
+            <option value="$PROJECT_DIR$/ferry-android-instrument-toast" />
             <option value="$PROJECT_DIR$/ferry-gradle-plugin" />
             <option value="$PROJECT_DIR$/ferry-monitor" />
             <option value="$PROJECT_DIR$/ferry-task-list-permission" />
             <option value="$PROJECT_DIR$/ferry-task-spi" />
             <option value="$PROJECT_DIR$/ferry-transform-spi" />
+            <option value="$PROJECT_DIR$/ferry-transform-toast" />
             <option value="$PROJECT_DIR$/ferry-transform-trace" />
             <option value="$PROJECT_DIR$/mylibrary" />
           </set>

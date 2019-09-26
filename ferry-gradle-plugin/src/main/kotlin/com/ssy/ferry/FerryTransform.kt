@@ -2,21 +2,16 @@ package com.ssy.ferry
 
 import com.android.build.api.transform.*
 import com.android.build.gradle.internal.pipeline.TransformManager
+import com.android.utils.FileUtils
 import com.argusapm.gradle.internal.utils.eachFileRecurse
-import com.argusapm.gradle.internal.utils.getUniqueJarName
-import com.ssy.ferry.asm.ASMWeaver
-import org.apache.commons.io.FileUtils
 import org.objectweb.asm.ClassReader
 import org.objectweb.asm.ClassWriter
-import org.objectweb.asm.tree.ClassNode
+import org.objectweb.asm.Opcodes
 import java.io.File
 import java.io.FileOutputStream
 import java.util.*
 
 abstract class FerryTransform : Transform() {
-    private lateinit var asmWeaver: ASMWeaver
-    private val transformers =
-        ServiceLoader.load(ClassTransformer::class.java, javaClass.classLoader).toList()
 
 
     override fun getName(): String {
@@ -28,103 +23,75 @@ abstract class FerryTransform : Transform() {
     }
 
     override fun isIncremental(): Boolean {
-        return true
+        return false
     }
 
     final override fun transform(transformInvocation: TransformInvocation?) {
 
 
         println("********* --       transform     -- **********")
-        asmWeaver = ASMWeaver()
-
-        if (transformInvocation != null) {
-            if (!transformInvocation.isIncremental) {
-                transformInvocation?.outputProvider.deleteAll()
-            }
-        }
+        val outputProvider = transformInvocation?.outputProvider
 
         transformInvocation?.inputs?.forEach { input ->
             input.directoryInputs.forEach { dirInput ->
-                val dest = transformInvocation.outputProvider.getContentLocation(
+
+
+                inject(dirInput.file.absolutePath)
+                val dest = outputProvider?.getContentLocation(
                     dirInput.name,
-                    dirInput.contentTypes, dirInput.scopes,
+                    dirInput.contentTypes,
+                    dirInput.scopes,
                     Format.DIRECTORY
                 )
-                FileUtils.forceMkdir(dest)
-                if (transformInvocation.isIncremental) {
-                    val srcDirPath = dirInput.file.absolutePath
-                    val destDirPath = dest.absolutePath
-                    dirInput.changedFiles.forEach { (file, status) ->
-                        val destFilePath = file.absolutePath.replace(srcDirPath, destDirPath)
-                        val destFile = File(destFilePath)
-                        when (status) {
-                            Status.REMOVED -> {
-                                FileUtils.deleteQuietly(destFile)
-                            }
-                            Status.CHANGED -> {
-                                FileUtils.deleteQuietly(destFile)
-                                asmWeaver.weaveClass(file, destFile)
-                            }
-                            Status.ADDED -> {
-                                asmWeaver.weaveClass(file, destFile)
-                            }
-                            else -> {
-                            }
-                        }
-                    }
-                } else {
-                    dirInput.file.eachFileRecurse { file ->
+                //  org.apache.commons.io.FileUtils.forceMkdir(dest)
 
-
-                        asmWeaver.weaveClass(
-                            file,
-                            File(
-                                file.absolutePath.replace(
-                                    dirInput.file.absolutePath,
-                                    dest.absolutePath
-                                )
-                            )
-                        )
-                    }
+                if (dest != null) {
+                    println("==>" + dest.absolutePath)
                 }
+                FileUtils.copyDirectory(dirInput.file, dest)
+
 
             }
 
-            input.jarInputs.forEach { jarInput ->
-                val dest = transformInvocation.outputProvider.getContentLocation(
-                    jarInput.file.getUniqueJarName(),
-                    jarInput.contentTypes,
-                    jarInput.scopes,
-                    Format.JAR
-                )
-                if (transformInvocation.isIncremental) {
-                    val status = jarInput.status
-                    when (status) {
-                        Status.REMOVED -> {
-                            FileUtils.deleteQuietly(dest)
-                        }
-                        Status.CHANGED -> {
-                            FileUtils.deleteQuietly(dest)
-                            asmWeaver.weaveJar(jarInput.file, dest)
-                        }
-                        Status.ADDED -> {
-                            asmWeaver.weaveJar(jarInput.file, dest)
-                        }
-                        else -> {
-                        }
-                    }
-                } else {
-                    asmWeaver.weaveJar(jarInput.file, dest)
-                }
-            }
 
-
-        asmWeaver.start()
+        }
 
 
     }
 
+    private fun inject(path: String) {
+        val dir = File(path)
+        if (dir.isDirectory) {
+            dir.eachFileRecurse { file ->
+                val filePath = file.absolutePath
+                if (filePath.endsWith(".class")
+                    && !filePath.contains("R$")
+                    && !filePath.contains("R.class")
+                    && !filePath.contains("BuildConfig.class")
+                    && !filePath.contains("TimeCache.class")
+                ) {
+                    val name = file.name
 
-}
+
+                    ServiceLoader.load(ClassTransformer::class.java, javaClass.classLoader)
+                        .toList()
+                        .forEach { classTransformer ->
+                            val cr = ClassReader(file.readBytes())
+                            val cw = ClassWriter(cr, ClassWriter.COMPUTE_FRAMES)
+
+                            val classVisitor = classTransformer.transform(cw)
+                            cr.accept(classVisitor, ClassReader.EXPAND_FRAMES)
+                            val fos = FileOutputStream(
+                                file.parentFile.absolutePath + File.separator + name
+                            )
+                            fos.write(cw.toByteArray())
+                            fos.flush()
+                        }
+
+
+                }
+            }
+        }
+    }
 
 }

@@ -16,7 +16,6 @@ class FerryPlugin : Plugin<Project> {
                android.registerTransform(FerryAppTransform())
 
 
-                println("*******************             registerTransform                       **************************")
                 project.afterEvaluate {
                     println("*********************************************")
                     println("********* --                    -- **********")

@@ -5,9 +5,10 @@ import org.objectweb.asm.MethodVisitor
 import org.objectweb.asm.Opcodes
 import org.objectweb.asm.commons.AdviceAdapter
 
-class TimeClassVisitor(verson:Int,cw: ClassVisitor) : ClassVisitor(verson, cw) {
+class TimeClassVisitor(verson: Int, cw: ClassVisitor) : ClassVisitor(verson, cw) {
     internal lateinit var className: String
     private var startTimeIndex = 0
+    private var mVerson = verson
 
     override fun visit(
         version: Int,
@@ -32,13 +33,12 @@ class TimeClassVisitor(verson:Int,cw: ClassVisitor) : ClassVisitor(verson, cw) {
 
 
         var mv = cv.visitMethod(access, name, desc, signature, exceptions)
-
         mv = object : AdviceAdapter(Opcodes.ASM5, mv, access, name, desc) {
 
             override fun onMethodEnter() {
 
 
-                println("--------------   onMethodEnter:"+name)
+                println("--------------   onMethodEnter:" + name)
                 mv.visitLdcInsn(name)
                 mv.visitLdcInsn(className)
                 mv.visitLdcInsn(desc)
