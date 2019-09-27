@@ -43,4 +43,20 @@ class MappingCollector : MappingProcessor {
 
     }
 
+    override fun originalClassName(proguardClassName: String, defaultClassName: String): String? {
+        return if (mObfuscatedRawClassMap.containsKey(proguardClassName)) {
+            mObfuscatedRawClassMap[proguardClassName]
+        } else {
+            defaultClassName
+        }
+    }
+
+    override  fun proguardClassName(originalClassName: String, defaultClassName: String): String? {
+        return if (mRawObfuscatedClassMap.containsKey(originalClassName)) {
+            mRawObfuscatedClassMap[originalClassName]
+        } else {
+            defaultClassName
+        }
+    }
+
 }

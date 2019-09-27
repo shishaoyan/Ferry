@@ -10,4 +10,7 @@ interface MappingProcessor {
         className: String, methodReturnTpye: String, methodName: String, methodArgement: String,
         newClassName: String, newMethodName: String
     )
+
+    fun proguardClassName(originalClassName: String, defaultClassName: String): String?
+    fun originalClassName(proguardClassName: String, defaultClassName: String): String?
 }
