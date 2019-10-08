@@ -30,4 +30,15 @@ class MethodInfo {
         this.originalName = methodInfo.originalName
         this.desc = methodInfo.desc
     }
+
+    fun matches(originalType: String?, originalArguments: String?): Boolean {
+        return (originalType == null || originalType == this.originalType) && (originalArguments == null || originalArguments == this.originalArguments)
+    }
+
+    companion object {
+        fun deFault(): MethodInfo {
+            return MethodInfo("", "", "", "")
+        }
+    }
+
 }
