@@ -1,7 +1,6 @@
 package com.ssy.ferry.retrace
 
 import com.ssy.ferry.trace.retrace.MappingCollector
-import org.objectweb.asm.MethodVisitor
 import org.objectweb.asm.Opcodes
 import org.objectweb.asm.tree.MethodNode
 import java.io.File
@@ -10,7 +9,6 @@ import java.util.concurrent.ConcurrentHashMap
 import java.util.concurrent.ExecutorService
 import java.util.concurrent.Future
 import java.util.concurrent.atomic.AtomicInteger
-import kotlin.collections.HashSet
 
 /**
  * 2019-09-27
@@ -52,13 +50,22 @@ class MethodCollector {
         return collectedMethodMap
     }
 
-    fun collect(srcFolderList: HashSet<File>, dependcyJarList: HashSet<File>) {
+    fun collect(srcFolderList: Set<File>) {
 
         val futures = LinkedList<Future<*>>()
 
+
+
+
+
+        for (future in futures) {
+            future.get()
+        }
+        futures.clear()
+
     }
 
-    class CollectMethodNode : MethodVisitor {
+    class CollectMethodNode : MethodNode {
         private val className: String
         private val isConstructor: Boolean
 
@@ -71,7 +78,7 @@ class MethodCollector {
             signature: String?,
             exceptions: Array<out String>?
 
-        ) : super(Opcodes.ASM5,access, name, desc, signature, exceptions) {
+        ) : super(Opcodes.ASM5, access, name, desc, signature, exceptions) {
             this.className = className
             this.isConstructor = isConstructor
         }
