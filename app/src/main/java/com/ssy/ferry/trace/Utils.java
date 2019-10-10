@@ -36,7 +36,8 @@ public class Utils {
         int priority = Integer.MIN_VALUE;
         int nice = Integer.MAX_VALUE;
         try {
-            String content = DeviceUtil.getStringFromFile(name).trim();
+          //  String content = DeviceUtil.getStringFromFile(name).trim();
+            String content = "";
             String[] args = content.split(" ");
             if (args.length >= 19) {
                 priority = Integer.parseInt(args[17].trim());

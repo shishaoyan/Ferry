@@ -78,4 +78,10 @@ class TraceMethod {
         this.desc = methodInfo.desc
         this.className = processor.proguardClassName(className, className).toString()
     }
+
+    override fun toString(): String {
+        return "TraceMethod(id=$id, accessFlag=$accessFlag, className='$className', methodName='$methodName', desc='$desc')"
+    }
+
+
 }

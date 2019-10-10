@@ -143,9 +143,9 @@ public class AnrTracer extends Tracer {
 
     private long[] dumpMemory() {
         long[] memory = new long[3];
-        memory[0] = DeviceUtil.getDalvikHeap();
-        memory[1] = DeviceUtil.getNativeHeap();
-        memory[2] = DeviceUtil.getVmSize();
+//        memory[0] = DeviceUtil.getDalvikHeap();
+//        memory[1] = DeviceUtil.getNativeHeap();
+//        memory[2] = DeviceUtil.getVmSize();
         return memory;
     }
 }

@@ -75,7 +75,6 @@ internal open class ListPermissionTask : DefaultTask() {
 
         } else if (id is OpaqueComponentArtifactIdentifier) {
             // this is the case for local jars.
-            // FIXME: use a non internal class.
             id.getDisplayName()
         } else if (id is ArtifactCollectionWithExtraArtifact.ExtraComponentIdentifier) {
             id.getDisplayName()

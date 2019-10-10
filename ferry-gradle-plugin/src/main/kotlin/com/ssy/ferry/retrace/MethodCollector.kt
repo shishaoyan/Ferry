@@ -17,76 +17,41 @@ import java.util.concurrent.atomic.AtomicInteger
 class MethodCollector {
     private val TAG = "MethodCollector"
 
-    private val executor: ExecutorService
-    private val mappingCollector: MappingCollector
+    private var mappingCollector: MappingCollector? = null
     private val collectedClassExtendMap = ConcurrentHashMap<String, String>()
 
     private val collectedIgnoreMethodMap = ConcurrentHashMap<String, TraceMethod>()
     //收集方法名 对应的方法信息
     private val collectedMethodMap: ConcurrentHashMap<String, TraceMethod>
     //这个就是我们的重点了 methodId
-    private val methodId: AtomicInteger
+    private var methodId: AtomicInteger
     private val ignoreCount = AtomicInteger()
     private val incrementCount = AtomicInteger()
 
     constructor(
-        executor: ExecutorService,
         mappingCollector: MappingCollector,
         methodId: AtomicInteger,
         collectedMethodMap: ConcurrentHashMap<String, TraceMethod>
 
     ) {
-        this.executor = executor
-        this.mappingCollector = mappingCollector
+        if (mappingCollector != null) {
+            this.mappingCollector = mappingCollector
+        }
         this.collectedMethodMap = collectedMethodMap
         this.methodId = methodId
     }
 
-    fun getCollectedClassExtendMap(): ConcurrentHashMap<String, String> {
-        return collectedClassExtendMap
-    }
 
     fun getCollectedMethodMap(): ConcurrentHashMap<String, TraceMethod> {
         return collectedMethodMap
     }
 
-    fun collect(srcFolderList: Set<File>) {
-
-        val futures = LinkedList<Future<*>>()
-
-
-
-
-
-        for (future in futures) {
-            future.get()
+    fun push(name: String?, traceMethod: TraceMethod) {
+        if (name != null && !collectedMethodMap.contains(name)) {
+            collectedMethodMap.put(name, traceMethod)
         }
-        futures.clear()
 
     }
 
-    class CollectMethodNode : MethodNode {
-        private val className: String
-        private val isConstructor: Boolean
 
-        constructor(
-            className: String,
-            isConstructor: Boolean,
-            access: Int,
-            name: String?,
-            desc: String?,
-            signature: String?,
-            exceptions: Array<out String>?
-
-        ) : super(Opcodes.ASM5, access, name, desc, signature, exceptions) {
-            this.className = className
-            this.isConstructor = isConstructor
-        }
-
-        override fun visitEnd() {
-            super.visitEnd()
-
-
-        }
-    }
 }

@@ -18,23 +18,42 @@ class FerryPlugin : Plugin<Project> {
 
             project.plugins.hasPlugin("com.android.application") -> project.getAndroid<AppExtension>().let { android ->
 
+                android.registerTransform(FerryAppTransform())
 
                 project.afterEvaluate {
                     println("*********************************************")
                     println("********* --                    -- **********")
                     println("********* --       Ferry        -- **********")
 
+
+
+                    /**
+                     * setp 1 首先处理 Task 模块
+                     */
+                    ServiceLoader.load(VariantProcessor::class.java, javaClass.classLoader).toList()
+                        .let { processors ->
+                            android.applicationVariants.forEach { variant ->
+                                if (variant.name == "debug") {
+                                    processors.forEach { processor ->
+                                        processor.process(variant)
+                                    }
+                                }
+                            }
+                        }
+
+                    /**
+                     * setp 2 处理 Transform 模块
+                     */
                     android.applicationVariants.forEach { variant ->
                         if (variant.name == "debug") {
-                            var baseVariantData =
-                                (variant as ApplicationVariantImpl).variantData
-                            Configuration.mappingOut = Joiner.on(File.separatorChar)
-                                .join(
-                                    baseVariantData.scope.globalScope.buildDir.toString(),
-                                    "outputs",
-                                    "mapping",
-                                    baseVariantData.scope.variantConfiguration.dirName
-                                )
+
+                            var baseVariantData = (variant as ApplicationVariantImpl).variantData
+                            Configuration.mappingOut = Joiner.on(File.separatorChar).join(
+                                baseVariantData.scope.globalScope.buildDir.toString(),
+                                "outputs",
+                                "mapping",
+                                baseVariantData.scope.variantConfiguration.dirName
+                            )
                             Configuration.packageName = variant.applicationId
                             Configuration.methodMapFilePath =
                                 Configuration.mappingOut + "/methodMapping.txt"
@@ -44,23 +63,10 @@ class FerryPlugin : Plugin<Project> {
                                 "traceClassOut",
                                 baseVariantData.scope.variantConfiguration.dirName
                             )
-                            android.registerTransform(FerryAppTransform())
+
                         }
                     }
-                    ServiceLoader.load(VariantProcessor::class.java, javaClass.classLoader).toList()
-                        .let { processors ->
-                            android.applicationVariants.forEach { variant ->
 
-
-                                if (variant.name == "debug") {
-                                    processors.forEach { processor ->
-
-
-                                        processor.process(variant)
-                                    }
-                                }
-                            }
-                        }
                     println("********* --                    -- **********")
                     println("*********************************************")
                 }

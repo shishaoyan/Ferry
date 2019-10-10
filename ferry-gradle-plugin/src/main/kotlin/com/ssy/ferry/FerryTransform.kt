@@ -9,8 +9,8 @@ import com.ssy.ferry.trace.retrace.MappingCollector
 import com.ssy.ferry.trace.retrace.MappingReader
 import org.objectweb.asm.ClassReader
 import org.objectweb.asm.ClassWriter
-import java.io.File
-import java.io.FileOutputStream
+import org.objectweb.asm.Opcodes.ASM5
+import java.io.*
 import java.util.*
 import java.util.concurrent.ConcurrentHashMap
 import java.util.concurrent.Executors
@@ -19,7 +19,8 @@ import java.util.concurrent.atomic.AtomicInteger
 
 abstract class FerryTransform : Transform() {
     private val TAG = "MatrixTraceTransform"
-
+    var methodId = AtomicInteger(0)
+    val collectedMethodMap = ConcurrentHashMap<String, TraceMethod>()
     override fun getName(): String {
         return "ferry"
     }
@@ -37,7 +38,7 @@ abstract class FerryTransform : Transform() {
 
         println("********* --       transform     -- **********")
         val outputProvider = transformInvocation?.outputProvider
-        parceMapping()
+        //  parceMapping()
         transformInvocation?.inputs?.forEach { input ->
             input.directoryInputs.forEach { dirInput ->
 
@@ -59,6 +60,32 @@ abstract class FerryTransform : Transform() {
 
         }
 
+        saveMethodToFile()
+    }
+
+    private fun saveMethodToFile() {
+        val methodMapFile = File("./myyyyy.txt")
+        if (!methodMapFile.parentFile.exists()) {
+            methodMapFile.parentFile.mkdirs()
+        }
+        var pw: PrintWriter? = null
+        try {
+            val fileOutputStream = FileOutputStream(methodMapFile, false)
+            val w = OutputStreamWriter(fileOutputStream, "UTF-8")
+            pw = PrintWriter(w)
+            collectedMethodMap.forEach {
+                pw.println( it.value.toString())
+            }
+
+        } catch (e: Exception) {
+            Log.e(TAG, "write method map Exception:%s", e.message)
+            e.printStackTrace()
+        } finally {
+            if (pw != null) {
+                pw.flush()
+                pw.close()
+            }
+        }
 
     }
 
@@ -69,11 +96,13 @@ abstract class FerryTransform : Transform() {
                 val filePath = file.absolutePath
                 if (filePath.endsWith(".class") && !filePath.contains("R$") && !filePath.contains("R.class") && !filePath.contains(
                         "BuildConfig.class"
-                    ) && !filePath.contains("TimeCache.class")
+                    ) && !filePath.contains("AppMethodBeat.class")
                 ) {
                     val name = file.name
 
-
+                    /**
+                     * step 1 先处理 外挂的ClassTransformer
+                     */
                     ServiceLoader.load(ClassTransformer::class.java, javaClass.classLoader).toList()
                         .forEach { classTransformer ->
                             val cr = ClassReader(file.readBytes())
@@ -88,10 +117,36 @@ abstract class FerryTransform : Transform() {
                             fos.flush()
                         }
 
+                    /**
+                     * setp 2 处理核心Transformer
+                     */
+
+                    val mappingCollector = MappingCollector()
+
+                    val methodCollector =
+                        MethodCollector(mappingCollector, methodId, collectedMethodMap)
+                    collectMethod(methodCollector, file)
+
 
                 }
             }
         }
+    }
+
+
+    private fun collectMethod(methodCollector: MethodCollector, file: File) {
+        val cr = ClassReader(file.readBytes())
+        val cw = ClassWriter(cr, ClassWriter.COMPUTE_FRAMES)
+
+        val classVisitor = CollectMethodClassVisitor(ASM5, cw)
+        classVisitor.methodCollector = methodCollector
+        classVisitor.methodId = methodId
+        cr.accept(classVisitor, ClassReader.EXPAND_FRAMES)
+        val fos = FileOutputStream(
+            file.parentFile.absolutePath + File.separator + file.name
+        )
+        fos.write(cw.toByteArray())
+        fos.flush()
     }
 
     private fun parceMapping() {
@@ -122,7 +177,9 @@ abstract class FerryTransform : Transform() {
         }
         futures.clear()
         Log.i(
-            TAG, "[parceMapping] Step(1)[Parse]... cost:%sms", System.currentTimeMillis() - startTime
+            TAG,
+            "[parceMapping] Step(1)[Parse]... cost:%sms",
+            System.currentTimeMillis() - startTime
         )
 
     }
