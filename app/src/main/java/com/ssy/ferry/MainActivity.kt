@@ -2,6 +2,7 @@ package com.ssy.ferry
 
 import android.app.Activity
 import android.os.Bundle
+import com.ssy.ferry.mytrace.Ferry
 import java.util.*
 
 class MainActivity : Activity() {
@@ -10,8 +11,8 @@ class MainActivity : Activity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-//        val anrTracer = AnrTracer()
-//        anrTracer.onStartTrace()
+        val ferry = Ferry()
+        ferry.start()
 
     }
 }
