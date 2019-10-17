@@ -1,4 +1,4 @@
-package com.ssy.ferry.core
+package com.ssy.ferry.listener
 
 /**
  * 2019-10-16
@@ -6,7 +6,8 @@ package com.ssy.ferry.core
  *
  * 这个就是呼吸监听 每一次的开始和结束 都是伴随着 Looper 的Printer 的 >>> 和 <<<
  */
-abstract class LooperDispatchListener {
+open abstract class LooperDispatchListener {
+
 
     var hasDispatchStart = false
 

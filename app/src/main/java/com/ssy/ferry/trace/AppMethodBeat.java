@@ -97,7 +97,7 @@ public class AppMethodBeat implements BeatLifecycle {
         public boolean isValid = true;
         public String source;
 
-        //这个方法是 链表需要释放掉 record 以及他之前的节点
+        //这个方法是 链表需要释放掉 indexRecord 以及他之前的节点
         //
         // index     this
         // 0-   0-   0-  0-  0-  0-  0
@@ -302,7 +302,7 @@ public class AppMethodBeat implements BeatLifecycle {
         //TODO 这个类的方法需要实现
         //   ActivityThreadHacker.hackSysHandlerCallback();
 
-        // 定期调用
+
         LooperMonitor.register(looperMonitorListener);
     }
 

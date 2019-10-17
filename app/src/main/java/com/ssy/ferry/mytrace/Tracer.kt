@@ -1,24 +1,15 @@
 package com.ssy.ferry.mytrace
 
+import com.ssy.ferry.listener.LooperObserver
+
 /**
  * 2019-10-16
  * @author Mr.S
  */
-interface Tracer {
-    /**
-     * 开始
-     */
-    fun start()
+open abstract class Tracer : LooperObserver(){
 
-    /**
-     * 结束
-     */
-    fun end()
 
-    /**
-     * 是否存活
-     */
-    fun isAlive(): Boolean
+
 
 
 
