@@ -45,6 +45,9 @@ class MethodMonitor : MonitorLifecycle {
     ): LongArray {
 
         var data = LongArray(0)
+        if (endRecord.index == -1) {
+            return data;
+        }
         try {
             if (startRecord.isValid and endRecord.isValid) {
                 var length: Int
@@ -69,7 +72,8 @@ class MethodMonitor : MonitorLifecycle {
     }
 
     companion object {
-        private val METHOD_ID_MAX = 0xFFFFF
+        val METHOD_ID_MAX = 0xFFFFF
+      @JvmField  open var METHOD_ID_DISPATCH = METHOD_ID_MAX - 1
         private val sMainThread = Looper.getMainLooper().thread
         private var sBuffer: LongArray = LongArray(Constants.BUFFER_SIZE)
         private val statusLock = Object()
@@ -104,7 +108,7 @@ class MethodMonitor : MonitorLifecycle {
         var isUpdateTime = false
 
         var curDiffTime: Long = SystemClock.uptimeMillis()
-        var diffTime: Long = curDiffTime
+      @JvmField  var diffTime: Long = curDiffTime
 
 
         open fun i(methodId: Int) {
@@ -154,6 +158,9 @@ class MethodMonitor : MonitorLifecycle {
          *
          */
         private fun flatData(methodId: Int, mIndex: Int, isIn: Boolean) {
+            if (methodId == METHOD_ID_DISPATCH) {
+                curDiffTime = SystemClock.uptimeMillis() - diffTime
+            }
             var trueId = 0L
             if (isIn) {
                 trueId = trueId or (1L shl 63)

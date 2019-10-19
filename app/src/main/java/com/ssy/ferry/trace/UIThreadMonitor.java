@@ -98,7 +98,6 @@ public class UIThreadMonitor implements Runnable, BeatLifecycle {
     }
 
     public void dispatchBegin() {
-        Log.e("haha", "dispatchBegin");
         token = dispatchTimeMs[0] = SystemClock.uptimeMillis();
         dispatchTimeMs[2] = SystemClock.currentThreadTimeMillis();
         AppMethodBeat.i(METHOD_ID_DISPATCH);
@@ -117,7 +116,6 @@ public class UIThreadMonitor implements Runnable, BeatLifecycle {
     }
 
     public void dispatchEnd() {
-        Log.e("haha", "dispatchEnd");
         if (isBelongFrame) {
             doFrameEnd(token);
         }

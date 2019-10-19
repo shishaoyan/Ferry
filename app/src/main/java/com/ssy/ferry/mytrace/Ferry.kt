@@ -16,15 +16,10 @@ class Ferry {
         UiThreadMonitor.getInstance().init()
         UiThreadMonitor.getInstance().start()
         MethodMonitor.getInstance().start()
-
-
-
         anrTracer.startTrace()
-        Thread(Runnable {
-            MethodMonitor.i(10)
-            Thread.sleep(5000)
-            MethodMonitor.o(10)
-        }).start()
+
+
+
 
     }
 }

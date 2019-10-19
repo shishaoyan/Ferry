@@ -26,7 +26,6 @@ public class AnrTracer extends Tracer {
     @Override
     public void dispatchBegin(long beginMs, long cpuBeginMs, long token) {
         super.dispatchBegin(beginMs, cpuBeginMs, token);
-        Log.e("haha", "--------------dispatchBegin");
         if (null != anrTask) {
             anrHandler.removeCallbacks(anrTask);
         }
@@ -39,7 +38,6 @@ public class AnrTracer extends Tracer {
     @Override
     public void dispatchEnd(long beginMs, long cpuBeginMs, long endMs, long cpuEndMs, long token, boolean isBelongFrame) {
         super.dispatchEnd(beginMs, cpuBeginMs, endMs, cpuEndMs, token, isBelongFrame);
-        Log.e("haha", "--------------dispatchEnd");
         if (null != anrTask) {
             anrHandler.removeCallbacks(anrTask);
         }
@@ -66,7 +64,6 @@ public class AnrTracer extends Tracer {
         public void run() {
 
             long curTime = SystemClock.uptimeMillis();
-            int[] processStat = Utils.getProcessPriority(android.os.Process.myPid());
             long[] data = AppMethodBeat.getInstance().copyData(beginRecord);
             beginRecord.release();
             //   String scene = AppMethodBeat.getVisibleScene();
