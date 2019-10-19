@@ -1,8 +1,7 @@
 package com.ssy.ferry.mytrace;
 
+import com.ssy.ferry.core.Constants;
 import com.ssy.ferry.core.MethodMonitor;
-import com.ssy.ferry.trace.Constants;
-import com.ssy.ferry.trace.FerryLog;
 
 import java.util.Iterator;
 import java.util.LinkedList;
@@ -130,7 +129,7 @@ public class TraceDataUtils {
                 root.add(node);
             } else if (lastNode.depth() >= depth) {//如果last深度 大于等于 此节点  说明这个节点不是last的子节点 ，last 可能是这个节点子节点
                 //那么就遍历last的父节点直到last 小于等于 此节点
-                while (lastNode!=null && lastNode.depth() > depth) {
+                while (lastNode != null && lastNode.depth() > depth) {
                     lastNode = lastNode.father;
                 }
                 //如果 last 的 父节点不为null 那么就把last的父节点赋值给 这个节点作为它的父节点 然后last的父节点把node节点添加为子节点
@@ -298,6 +297,7 @@ public class TraceDataUtils {
         }
 
     }
+
     public static long stackToString(LinkedList<MethodItem> stack, StringBuilder reportBuilder, StringBuilder logcatBuilder) {
         logcatBuilder.append("|*   TraceStack:").append("\n");
         logcatBuilder.append("|*        [id count cost]").append("\n");

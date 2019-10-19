@@ -21,9 +21,9 @@ class MainActivity : Activity() {
 
         btn.setOnClickListener {
             MethodMonitor.i(count)
-            Thread.sleep((count*1000).toLong())
+            Thread.sleep((6000).toLong())
             MethodMonitor.o(count)
-            count++;
+            count++
         }
 
         MethodMonitor.o(0)

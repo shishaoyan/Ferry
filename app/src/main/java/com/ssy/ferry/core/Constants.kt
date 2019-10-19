@@ -7,6 +7,7 @@ package com.ssy.ferry.core
 class Constants {
     companion object {
 
+
         val BUFFER_SIZE  = 100 * 10000 // 7.6M
         val TIME_UPDATE_CYCLE_MS:Long = 5
         val FILTER_STACK_MAX_COUNT = 60
@@ -15,7 +16,7 @@ class Constants {
         val DEFAULT_EVIL_METHOD_THRESHOLD_MS = 1000
         val DEFAULT_FPS_TIME_SLICE_ALIVE_MS = 10 * 1000
         val TIME_MILLIS_TO_NANO = 1000000
-        val DEFAULT_ANR:Long = 5 * 1000
+        @kotlin.jvm.JvmField val DEFAULT_ANR:Long = 5 * 1000
 
         val DEFAULT_DROPPED_NORMAL = 3
         val DEFAULT_DROPPED_MIDDLE = 9

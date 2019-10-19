@@ -73,7 +73,7 @@ class MethodMonitor : MonitorLifecycle {
 
     companion object {
         val METHOD_ID_MAX = 0xFFFFF
-      @JvmField  open var METHOD_ID_DISPATCH = METHOD_ID_MAX - 1
+        @JvmField  open var METHOD_ID_DISPATCH = METHOD_ID_MAX - 1
         private val sMainThread = Looper.getMainLooper().thread
         private var sBuffer: LongArray = LongArray(Constants.BUFFER_SIZE)
         private val statusLock = Object()
@@ -108,7 +108,7 @@ class MethodMonitor : MonitorLifecycle {
         var isUpdateTime = false
 
         var curDiffTime: Long = SystemClock.uptimeMillis()
-      @JvmField  var diffTime: Long = curDiffTime
+        @JvmField  var diffTime: Long = curDiffTime
 
 
         open fun i(methodId: Int) {

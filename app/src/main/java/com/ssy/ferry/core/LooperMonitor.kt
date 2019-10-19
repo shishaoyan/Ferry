@@ -5,6 +5,7 @@ import android.os.Looper
 import android.os.MessageQueue
 import android.util.Printer
 import android.os.Build.VERSION.SDK_INT
+import android.util.Log
 import com.ssy.ferry.listener.LooperDispatchListener
 import kotlin.collections.HashSet
 
@@ -34,12 +35,11 @@ class LooperMonitor : MessageQueue.IdleHandler {
     }
 
     override fun queueIdle(): Boolean {
-
         repalcePrinter()
         return true
     }
 
-     constructor() {
+    constructor() {
         repalcePrinter()
         if (SDK_INT >= Build.VERSION_CODES.M) {
             Looper.getMainLooper().queue.addIdleHandler(this)
@@ -51,20 +51,26 @@ class LooperMonitor : MessageQueue.IdleHandler {
 
     private fun repalcePrinter() {
         val originPrinter = reflectObject<Printer>(Looper.getMainLooper(), "mLogging")
-        printer = Printer { str ->
-            var isValid = false //是否可用
-            if (originPrinter != null) {
-                originPrinter.println(str)
+
+        Looper.getMainLooper().setMessageLogging( object : Printer {
+             var isHasChecked = false
+             var isValid = false
+
+            override fun println(x: String) {
+                originPrinter?.println(x)
+
+                if (!isHasChecked) {
+                    isValid = x[0] == '>' || x[0] == '<'
+                    isHasChecked = true
+                    if (!isValid) {
+                    }
+                }
+
+                if (isValid) {
+                    dispatch(x[0] == '>')
+                }
             }
-            isValid = str[0] == '<' || str[0] == '>'
-            if (isValid) {
-                dispatch(str[0] == '>')
-            }
-
-
-        }
-        Looper.getMainLooper().setMessageLogging(printer)
-
+        })
     }
 
     private fun dispatch(isStart: Boolean) {

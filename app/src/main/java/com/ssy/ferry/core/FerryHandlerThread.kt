@@ -3,7 +3,6 @@ package com.ssy.ferry.core
 import android.os.Handler
 import android.os.HandlerThread
 import android.os.Looper
-import com.ssy.ferry.trace.FerryHandlerThread
 import java.util.HashSet
 
 /**
