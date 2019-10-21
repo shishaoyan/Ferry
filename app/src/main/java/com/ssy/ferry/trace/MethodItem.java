@@ -1,4 +1,4 @@
-package com.ssy.ferry.mytrace;
+package com.ssy.ferry.trace;
 
 public class MethodItem {
 

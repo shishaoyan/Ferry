@@ -1,7 +1,7 @@
-package com.ssy.ferry.mytrace;
+package com.ssy.ferry.trace;
 
 import com.ssy.ferry.core.Constants;
-import com.ssy.ferry.core.MethodMonitor;
+import com.ssy.ferry.core.MethodMonitor2;
 
 import java.util.Iterator;
 import java.util.LinkedList;
@@ -32,7 +32,7 @@ public class TraceDataUtils {
             }
             //如果是严格模式那么 只有是 I 且 是 METHOD_ID_DISPATCH 方法才可以放到堆栈
             if (isStrict) {
-                if (isIn(trueId) && MethodMonitor.METHOD_ID_DISPATCH == getMethodId(trueId)) {
+                if (isIn(trueId) && MethodMonitor2.METHOD_ID_DISPATCH == getMethodId(trueId)) {
                     isBegin = true;
                 }
                 if (!isBegin) {
@@ -44,7 +44,7 @@ public class TraceDataUtils {
             if (isIn(trueId)) {
                 lastInId = getMethodId(trueId);
                 //如果是 METHOD_ID_DISPATCH 方法说明是开始的方法 深度置零 重新计数深度
-                if (lastInId == MethodMonitor.METHOD_ID_DISPATCH) {
+                if (lastInId == MethodMonitor2.METHOD_ID_DISPATCH) {
                     depth = 0;
                 }
                 depth++;
@@ -65,7 +65,7 @@ public class TraceDataUtils {
                         temp.add(in);
                     }
                     //如果rawdata 拿空了 i 和 o 和不匹配 而且这个方法是 METHOD_ID_DISPATCH
-                    if (inMethodId != outMethodId && inMethodId == MethodMonitor.METHOD_ID_DISPATCH) {
+                    if (inMethodId != outMethodId && inMethodId == MethodMonitor2.METHOD_ID_DISPATCH) {
                         FerryLog.e(TAG, "inMethodId[%s] !=outMethodId[%s] throw this outMethodId!", inMethodId, outMethodId);
                         rawData.addAll(temp);
                         depth += rawData.size();
@@ -96,7 +96,7 @@ public class TraceDataUtils {
             long turnId = rawData.pop();
             int methodId = getMethodId(turnId);
             boolean isIn = isIn(turnId);
-            long inTime = geteTime(turnId) + MethodMonitor.diffTime;
+            long inTime = geteTime(turnId) + MethodMonitor2.diffTime;
             FerryLog.w(TAG, "[structuredDataToStack] has never out method[%s], isIn:%s, inTime:%s, endTime:%s,rawData size:%s",
                     methodId, isIn, inTime, endTime, rawData.size());
             if (!isIn) {

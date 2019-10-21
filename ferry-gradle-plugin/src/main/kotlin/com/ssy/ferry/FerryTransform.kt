@@ -64,7 +64,7 @@ abstract class FerryTransform : Transform() {
     }
 
     private fun saveMethodToFile() {
-        val methodMapFile = File("./myyyyy.txt")
+        val methodMapFile = File("./ferry_mapping.txt")
         if (!methodMapFile.parentFile.exists()) {
             methodMapFile.parentFile.mkdirs()
         }
@@ -96,7 +96,7 @@ abstract class FerryTransform : Transform() {
                 val filePath = file.absolutePath
                 if (filePath.endsWith(".class") && !filePath.contains("R$") && !filePath.contains("R.class") && !filePath.contains(
                         "BuildConfig.class"
-                    ) && !filePath.contains("AppMethodBeat.class")
+                    ) && filePath.contains("MainActivity")
                 ) {
                     val name = file.name
 

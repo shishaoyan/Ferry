@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.ssy.ferry.mytrace;
+package com.ssy.ferry.trace;
 
 /**
  * Created by zhangshaowen on 17/5/17.

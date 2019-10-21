@@ -1,8 +1,8 @@
-package com.ssy.ferry.trace;
+package com.ssy.ferry.core;
 
 
 
-public class AppMethodBeat {
+public class MethodMonitor2 {
 
 
     public static void i(int menthodId) {
