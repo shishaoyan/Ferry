@@ -27,7 +27,7 @@ public class UiThreadMonitor extends MonitorLifecycle implements Runnable {
     }
 
    public static void dispatchStart() {
-        MethodMonitor2.i(MethodMonitor2.METHOD_ID_DISPATCH);
+        MethodMonitor.i(MethodMonitor.METHOD_ID_DISPATCH);
         dispatchTimeMs[0] = SystemClock.uptimeMillis();
         token = dispatchTimeMs[0];
         dispatchTimeMs[2] = SystemClock.currentThreadTimeMillis();
@@ -42,7 +42,7 @@ public class UiThreadMonitor extends MonitorLifecycle implements Runnable {
     }
 
    public static void dispatchEnd() {
-        MethodMonitor2.o(MethodMonitor2.METHOD_ID_DISPATCH);
+        MethodMonitor.o(MethodMonitor.METHOD_ID_DISPATCH);
         dispatchTimeMs[1] = SystemClock.uptimeMillis();
         dispatchTimeMs[3] = SystemClock.currentThreadTimeMillis();
         synchronized (observers) {

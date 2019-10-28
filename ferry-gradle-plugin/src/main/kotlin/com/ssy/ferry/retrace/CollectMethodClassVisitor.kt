@@ -57,14 +57,14 @@ class CollectMethodClassVisitor(api: Int, cv: ClassVisitor?) : ClassVisitor(api,
                 println("--------------   onMethodEnter:" + name)
                 mv.visitIntInsn(Opcodes.SIPUSH, traceMethod.id)
                 mv.visitMethodInsn(
-                    Opcodes.INVOKESTATIC, "com/ssy/ferry/core/MethodMonitor2", "i", "(I)V", false
+                    Opcodes.INVOKESTATIC, "com/ssy/ferry/core/MethodMonitor", "i", "(I)V", false
                 )
             }
 
             override fun onMethodExit(opcode: Int) {
                 mv.visitIntInsn(Opcodes.SIPUSH, traceMethod.id)
                 mv.visitMethodInsn(
-                    Opcodes.INVOKESTATIC, "com/ssy/ferry/core/MethodMonitor2", "o", "(I)V", false
+                    Opcodes.INVOKESTATIC, "com/ssy/ferry/core/MethodMonitor", "o", "(I)V", false
                 )
                 println("--------------   onMethodExit")
             }

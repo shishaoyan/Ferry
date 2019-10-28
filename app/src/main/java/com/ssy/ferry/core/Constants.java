@@ -6,7 +6,7 @@ package com.ssy.ferry.core;
  * @author Mr.S
  */
 public class Constants {
-
+    public static final float FILTER_STACK_KEY_ALL_PERCENT = .3F;
     public static int BUFFER_SIZE = 100 * 10000;// 7.6M
     public static long TIME_UPDATE_CYCLE_MS = 5;
     public static int FILTER_STACK_MAX_COUNT = 60;

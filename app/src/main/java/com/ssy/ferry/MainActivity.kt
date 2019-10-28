@@ -14,7 +14,7 @@ class MainActivity : Activity() {
         ferry.start()
 
         btn.setOnClickListener {
-            d();
+            d()
         }
 
 

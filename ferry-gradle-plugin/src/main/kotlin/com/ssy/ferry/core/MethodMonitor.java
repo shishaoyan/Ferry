@@ -2,7 +2,7 @@ package com.ssy.ferry.core;
 
 
 
-public class MethodMonitor2 {
+public class MethodMonitor {
 
 
     public static void i(int menthodId) {

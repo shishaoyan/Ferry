@@ -1,6 +1,6 @@
 package com.ssy.ferry.trace;
 
-import com.ssy.ferry.core.MethodMonitor2;
+import com.ssy.ferry.core.MethodMonitor;
 import com.ssy.ferry.core.UiThreadMonitor;
 
 /**
@@ -16,7 +16,7 @@ public class Ferry {
 
         UiThreadMonitor.getInstance().init();
         UiThreadMonitor.getInstance().start();
-        MethodMonitor2.getInstance().start();
+        MethodMonitor.getInstance().start();
         anrTracer.startTrace();
 
 

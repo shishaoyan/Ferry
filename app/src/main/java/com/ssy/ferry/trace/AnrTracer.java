@@ -1,21 +1,18 @@
 package com.ssy.ferry.trace;
 
 import android.os.Handler;
+import android.os.Looper;
 import android.os.SystemClock;
 import android.util.Log;
 
 import com.ssy.ferry.core.Constants;
 import com.ssy.ferry.core.FerryHandlerThread;
-import com.ssy.ferry.core.MethodMonitor2;
+import com.ssy.ferry.core.MethodMonitor;
 import com.ssy.ferry.core.UiThreadMonitor;
-
-import java.util.ArrayList;
-import java.util.Iterator;
+import com.ssy.ferry.util.DeviceUtil;
+import com.ssy.ferry.util.Utils;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-import java.util.concurrent.Future;
 
 /**
  * 2019-10-21
@@ -36,8 +33,7 @@ public class AnrTracer extends Tracer {
             anrHandler.removeCallbacks(anrTask);
         }
         isDispatchBegin = true;
-        anrTask =
-                new AnrHandleTask(MethodMonitor2.getInstance().maskIndex("AnrTracer#dispatchBegin"), token);
+        anrTask = new AnrHandleTask(MethodMonitor.getInstance().maskIndex("AnrTracer#dispatchBegin"), token);
         anrHandler.postDelayed(anrTask, Constants.DEFAULT_ANR);
     }
 
@@ -52,6 +48,10 @@ public class AnrTracer extends Tracer {
     ) {
         super.dispatchEnd(beginMs, cpuBeginMs, endMs, cpuEndMs, token, isBelongFrame);
         isDispatchBegin = false;
+        if (null != anrTask) {
+            anrTask.getBeginRecord().release();
+            anrHandler.removeCallbacks(anrTask);
+        }
     }
 
     void startTrace() {
@@ -62,10 +62,14 @@ public class AnrTracer extends Tracer {
 
     class AnrHandleTask implements Runnable {
         private String TAG = "AnrHandleTask";
-        MethodMonitor2.IndexRecord beginRecord = null;
+        MethodMonitor.IndexRecord beginRecord = null;
+
+        public MethodMonitor.IndexRecord getBeginRecord() {
+            return beginRecord;
+        }
 
         AnrHandleTask(
-                MethodMonitor2.IndexRecord beginRecord, long token
+                MethodMonitor.IndexRecord beginRecord, long token
         ) {
             this.beginRecord = beginRecord;
             this.token = token;
@@ -77,7 +81,8 @@ public class AnrTracer extends Tracer {
         @Override
         public void run() {
             long curTime = SystemClock.uptimeMillis();
-            long[] data = MethodMonitor2.getInstance().copyData(beginRecord);
+            long[] data = MethodMonitor.getInstance().copyData(beginRecord);
+
 
             for (int i = 0; i < data.length; i++) {
                 Log.d(TAG, "methodID: " + getMethodId(data[i]));
@@ -85,14 +90,56 @@ public class AnrTracer extends Tracer {
             }
             Log.d(TAG, "data --" + data.length);
             beginRecord.release();
-            LinkedHashMap<Integer, Long> longLinkedHashMap = dealData(data);
 
-            Iterator<Map.Entry<Integer, Long>> iterator= longLinkedHashMap.entrySet().iterator();
+            // memory
+            long[] memoryInfo = dumpMemory();
 
-            while(iterator.hasNext()){
-                Map.Entry entry = iterator.next();
-                Log.d(TAG,entry.getKey()+":"+entry.getValue());
+            // Thread state
+            Thread.State status = Looper.getMainLooper().getThread().getState();
+            String dumpStack = Utils.getStack(Looper.getMainLooper().getThread().getStackTrace(), "|*\t\t", 12);
+
+            //frame
+            long inputCost = 0;
+            long animationCost = 0;
+            long traversalCost = 0;
+
+
+            // trace
+            LinkedList<MethodItem> stack = new LinkedList();
+            if (data.length > 0) {
+                TraceDataUtils.structuredDataToStack(data, stack, true, curTime);
+//                TraceDataUtils.trimStack(stack, Constants.TARGET_EVIL_METHOD_STACK, new TraceDataUtils.IStructuredDataFilter() {
+//                    @Override
+//                    public boolean isFilter(long during, int filterCount) {
+//                        return during < filterCount * Constants.TIME_UPDATE_CYCLE_MS;
+//                    }
+//
+//                    @Override
+//                    public int getFilterMaxCount() {
+//                        return Constants.FILTER_STACK_MAX_COUNT;
+//                    }
+//
+//                    @Override
+//                    public void fallback(List<MethodItem> stack, int size) {
+//                        FerryLog.w(TAG, "[fallback] size:%s targetSize:%s stack:%s", size, Constants.TARGET_EVIL_METHOD_STACK, stack);
+//                        Iterator iterator = stack.listIterator(Math.min(size, Constants.TARGET_EVIL_METHOD_STACK));
+//                        while (iterator.hasNext()) {
+//                            iterator.next();
+//                            iterator.remove();
+//                        }
+//                    }
+//                });
             }
+
+            StringBuilder reportBuilder = new StringBuilder();
+            StringBuilder logcatBuilder = new StringBuilder();
+            long stackCost = Math.max(Constants.DEFAULT_ANR, TraceDataUtils.stackToString(stack, reportBuilder, logcatBuilder));
+
+            // stackKey
+            String stackKey = TraceDataUtils.getTreeKey(stack, stackCost);
+            FerryLog.w(TAG, "%s \npostTime:%s curTime:%s", printAnr(memoryInfo, status, logcatBuilder, stack.size(), stackKey, dumpStack, inputCost, animationCost, traversalCost), token, curTime); // for logcat
+
+            // report
 
         }
     }
@@ -120,6 +167,40 @@ public class AnrTracer extends Tracer {
         }
 
         return linkedHashMap;
+    }
+
+
+    private String printAnr(long[] memoryInfo, Thread.State state, StringBuilder stack, long stackSize, String stackKey, String dumpStack, long inputCost, long animationCost, long traversalCost) {
+        StringBuilder print = new StringBuilder();
+        print.append(" \n>>>>>>>>>>>>>>>>>>>>>>> maybe happens ANR(5s)! <<<<<<<<<<<<<<<<<<<<<<<\n");
+        print.append("|* [Memory]").append("\n");
+        print.append("|*\tDalvikHeap: ").append(memoryInfo[0]).append("kb\n");
+        print.append("|*\tNativeHeap: ").append(memoryInfo[1]).append("kb\n");
+        print.append("|*\tVmSize: ").append(memoryInfo[2]).append("kb\n");
+        print.append("|* [doFrame]").append("\n");
+        print.append("|*\tinputCost: ").append(inputCost).append("\n");
+        print.append("|*\tanimationCost: ").append(animationCost).append("\n");
+        print.append("|*\ttraversalCost: ").append(traversalCost).append("\n");
+        print.append("|* [Thread]").append("\n");
+        print.append("|*\tState: ").append(state).append("\n");
+        print.append("|*\tStack: ").append(dumpStack);
+        print.append("|* [Trace]").append("\n");
+        print.append("|*\tStackSize: ").append(stackSize).append("\n");
+        print.append("|*\tStackKey: ").append(stackKey).append("\n");
+        print.append(stack.toString());
+
+        print.append("=========================================================================");
+        return print.toString();
+
+
+    }
+
+    private long[] dumpMemory() {
+        long[] memory = new long[3];
+        memory[0] = DeviceUtil.getDalvikHeap();
+        memory[1] = DeviceUtil.getNativeHeap();
+        memory[2] = DeviceUtil.getVmSize();
+        return memory;
     }
 
 }
