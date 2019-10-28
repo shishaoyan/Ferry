@@ -22,7 +22,7 @@ public class Constants {
     public static long DEFAULT_STARTUP_THRESHOLD_MS_COLD = 10 * 1000;
 
     public static long DEFAULT_RELEASE_BUFFER_DELAY = 15 * 1000;
-    public static long TARGET_EVIL_METHOD_STACK = 30;
+    public static int TARGET_EVIL_METHOD_STACK = 30;
     public static long MAX_LIMIT_ANALYSE_STACK_KEY_NUM = 10;
 
     public static long LIMIT_WARM_THRESHOLD_MS = 5 * 1000;

@@ -58,10 +58,11 @@ public class UiThreadMonitor extends MonitorLifecycle implements Runnable {
 
         LooperMonitor.register(new LooperMonitor.LooperDispatchListener() {
 
-            public boolean isAlive() {
+
+            @Override
+            boolean isValid() {
                 return alive;
             }
-
 
             public void dispatchStart() {
                 super.dispatchStart();

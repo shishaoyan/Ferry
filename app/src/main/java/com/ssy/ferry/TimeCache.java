@@ -1,6 +1,5 @@
 package com.ssy.ferry;
 
-import android.util.Log;
 
 public class TimeCache {
 

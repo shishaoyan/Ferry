@@ -14,9 +14,27 @@ class MainActivity : Activity() {
         ferry.start()
 
         btn.setOnClickListener {
-            Thread.sleep((6000).toLong())
+            d();
         }
 
 
+    }
+
+    fun a() {
+        Thread.sleep((300).toLong())
+    }
+
+    fun b() {
+        Thread.sleep((2000).toLong())
+    }
+
+    fun c() {
+        Thread.sleep((3000).toLong())
+    }
+
+    fun d() {
+        a();
+        b();
+        c();
     }
 }

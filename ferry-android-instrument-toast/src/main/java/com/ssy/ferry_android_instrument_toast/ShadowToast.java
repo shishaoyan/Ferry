@@ -2,7 +2,7 @@ package com.ssy.ferry_android_instrument_toast;
 
 import android.os.Build.VERSION;
 import android.os.Handler;
-import android.util.Log;
+
 import android.widget.Toast;
 
 import com.ssy.ferry_android_instrument.CaughtCallback;

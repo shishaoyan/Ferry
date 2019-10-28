@@ -6,6 +6,8 @@ import android.os.Looper;
 import android.os.SystemClock;
 import android.util.Log;
 
+import com.ssy.ferry.trace.FerryLog;
+
 
 /**
  * 2019-10-21
@@ -15,11 +17,18 @@ import android.util.Log;
 public class MethodMonitor2 extends MonitorLifecycle {
     private static IndexRecord mIndexRecordHead = null;
     private static int METHOD_ID_MAX = 0xFFFFF;
-    //  private val sMainThread = Looper.getMainLooper().thread as Thread
+    private static HandlerThread sTimerUpdateThread = FerryHandlerThread.getNewHandlerThread("ferry_time_update_thread");
+    private static Handler sHandler = new Handler(sTimerUpdateThread.getLooper());
+    private static Runnable checkStartExpiredRunnable = null;
     private static Object statusLock = new Object();
     private static long[] sBuffer = new long[Constants.BUFFER_SIZE];
     private static int mIndex = 0;
     private static LooperMonitor.LooperDispatchListener looperDispatchListener = new LooperMonitor.LooperDispatchListener() {
+        @Override
+        boolean isValid() {
+            return alive;
+        }
+
         @Override
         public void dispatchStart() {
             super.dispatchStart();
@@ -32,9 +41,7 @@ public class MethodMonitor2 extends MonitorLifecycle {
             MethodMonitor2.dispatchEnd();
         }
 
-        public boolean isAlive() {
-            return alive;
-        }
+
     };
 
 
@@ -57,44 +64,44 @@ public class MethodMonitor2 extends MonitorLifecycle {
     public static long diffTime = curDiffTime;
 
     public static void i(int methodId) {
-//        if (status <= STATUS_STOPED) {
-//            return;
-//        }
-//        if (methodId >= METHOD_ID_MAX) {
-//            return;
-//        }
-//        curDiffTime = SystemClock.uptimeMillis() - diffTime;
-//        if (status == STATUS_DEFAULT) {
-//            synchronized (statusLock) {
-//                realStart();
-//            }
-//        }
-//        if (Thread.currentThread() == Looper.getMainLooper().getThread()) {
-//            if (mIndex < Constants.BUFFER_SIZE) {
-//                flatData(methodId, mIndex, true);
-//            } else {
-//                mIndex = -1;
-//            }
-//            ++mIndex;
-//        }
+        if (status <= STATUS_STOPED) {
+            return;
+        }
+        if (methodId >= METHOD_ID_MAX) {
+            return;
+        }
+
+        if (status == STATUS_DEFAULT) {
+            synchronized (statusLock) {
+                realStart();
+            }
+        }
+        if (Thread.currentThread() == Looper.getMainLooper().getThread()) {
+            if (mIndex < Constants.BUFFER_SIZE) {
+                flatData(methodId, mIndex, true);
+            } else {
+                mIndex = -1;
+            }
+            ++mIndex;
+        }
     }
 
     public static void o(int methodId) {
-//        if (status <= STATUS_STOPED) {
-//            return;
-//        }
-//        if (methodId >= METHOD_ID_MAX) {
-//            return;
-//        }
-//
-//        if (Thread.currentThread() == Looper.getMainLooper().getThread()) {
-//            if (mIndex < Constants.BUFFER_SIZE) {
-//                flatData(methodId, mIndex, false);
-//            } else {
-//                mIndex = -1;
-//            }
-//            ++mIndex;
-//        }
+        if (status <= STATUS_STOPED) {
+            return;
+        }
+        if (methodId >= METHOD_ID_MAX) {
+            return;
+        }
+
+        if (Thread.currentThread() == Looper.getMainLooper().getThread()) {
+            if (mIndex < Constants.BUFFER_SIZE) {
+                flatData(methodId, mIndex, false);
+            } else {
+                mIndex = -1;
+            }
+            ++mIndex;
+        }
     }
 
     /**
@@ -115,15 +122,25 @@ public class MethodMonitor2 extends MonitorLifecycle {
     }
 
     private static void realStart() {
-//        sHandler.removeCallbacksAndMessages(null);
-//        sHandler.postDelayed(updateTimeRunnable, Constants.TIME_UPDATE_CYCLE_MS);
-//        LooperMonitor.register(looperDispatchListener);
+
+        curDiffTime = SystemClock.uptimeMillis() - diffTime;
+        sHandler.removeCallbacksAndMessages(null);
+        sHandler.postDelayed(updateTimeRunnable, Constants.TIME_UPDATE_CYCLE_MS);
+        sHandler.postDelayed(checkStartExpiredRunnable = new Runnable() {
+            @Override
+            public void run() {
+                synchronized (statusLock) {
+                    FerryLog.i(TAG, "[startExpired] timestamp:%s status:%s", System.currentTimeMillis(), status);
+                }
+            }
+        }, Constants.DEFAULT_RELEASE_BUFFER_DELAY);
+        LooperMonitor.register(looperDispatchListener);
     }
 
 
     static void dispatchStart() {
         isUpdateTime = true;
-        diffTime = SystemClock.uptimeMillis() - diffTime;
+        curDiffTime = SystemClock.uptimeMillis() - diffTime;
         synchronized (updateTimeLock) {
             updateTimeLock.notifyAll();
         }
@@ -167,7 +184,7 @@ public class MethodMonitor2 extends MonitorLifecycle {
     @Override
     public void start() {
         synchronized (statusLock) {
-            if (status < STATUS_STARTED) {
+            if (status > STATUS_STARTED) {
                 status = STATUS_STARTED;
                 alive = true;
             }
@@ -228,7 +245,7 @@ public class MethodMonitor2 extends MonitorLifecycle {
     /**
      * 创建 IndexRecord
      */
-  public  IndexRecord maskIndex(String source) {
+    public IndexRecord maskIndex(String source) {
 
         if (mIndexRecordHead == null) {
             mIndexRecordHead = new IndexRecord(mIndex - 1);

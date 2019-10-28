@@ -1,5 +1,7 @@
 package com.ssy.ferry.trace;
 
+import android.util.Log;
+
 import com.ssy.ferry.core.Constants;
 import com.ssy.ferry.core.MethodMonitor2;
 
@@ -9,7 +11,7 @@ import java.util.List;
 import java.util.ListIterator;
 
 public class TraceDataUtils {
-    private static final String TAG = "Matrix.TraceDataUtils";
+    private static final String TAG = "TraceDataUtils";
 
     public interface IStructuredDataFilter {
         boolean isFilter(long during, int fiterCount);
@@ -314,4 +316,35 @@ public class TraceDataUtils {
         }
         return stackCost;
     }
+
+    public static String getTreeKey(List<MethodItem> stack, final int targetCount) {
+        StringBuilder ss = new StringBuilder();
+        final List<MethodItem> tmp = new LinkedList<>(stack);
+        trimStack(tmp, targetCount, new TraceDataUtils.IStructuredDataFilter() {
+            @Override
+            public boolean isFilter(long during, int filterCount) {
+                return during < filterCount * Constants.TIME_UPDATE_CYCLE_MS;
+            }
+
+            @Override
+            public int getFilterMaxCount() {
+                return Constants.FILTER_STACK_MAX_COUNT;
+            }
+
+            @Override
+            public void fallback(List<MethodItem> stack, int size) {
+                FerryLog.w(TAG, "[getTreeKey] size:%s targetSize:%s", size, targetCount);
+                Iterator iterator = stack.listIterator(Math.min(size, targetCount));
+                while (iterator.hasNext()) {
+                    iterator.next();
+                    iterator.remove();
+                }
+            }
+        });
+        for (MethodItem item : tmp) {
+            ss.append(item.methodId + "|");
+        }
+        return ss.toString();
+    }
+
 }

@@ -16,6 +16,8 @@
 
 package com.ssy.ferry.trace;
 
+import android.util.Log;
+
 /**
  * Created by zhangshaowen on 17/5/17.
  */
@@ -26,32 +28,32 @@ public class FerryLog {
         @Override
         public void v(final String tag, final String format, final Object... params) {
             String log = (params == null || params.length == 0) ? format : String.format(format, params);
-            android.util.Log.v(tag, log);
+            Log.v(tag, log);
         }
 
         @Override
         public void i(final String tag, final String format, final Object... params) {
             String log = (params == null || params.length == 0) ? format : String.format(format, params);
-            android.util.Log.i(tag, log);
+            Log.i(tag, log);
 
         }
 
         @Override
         public void d(final String tag, final String format, final Object... params) {
             String log = (params == null || params.length == 0) ? format : String.format(format, params);
-            android.util.Log.d(tag, log);
+            Log.d(tag, log);
         }
 
         @Override
         public void w(final String tag, final String format, final Object... params) {
             String log = (params == null || params.length == 0) ? format : String.format(format, params);
-            android.util.Log.w(tag, log);
+            Log.w(tag, log);
         }
 
         @Override
         public void e(final String tag, final String format, final Object... params) {
             String log = (params == null || params.length == 0) ? format : String.format(format, params);
-            android.util.Log.e(tag, log);
+            Log.e(tag, log);
         }
 
         @Override
@@ -60,8 +62,8 @@ public class FerryLog {
             if (log == null) {
                 log = "";
             }
-            log += "  " + android.util.Log.getStackTraceString(tr);
-            android.util.Log.e(tag, log);
+            log += "  " + Log.getStackTraceString(tr);
+            Log.e(tag, log);
         }
     };
 

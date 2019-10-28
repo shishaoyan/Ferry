@@ -4,8 +4,8 @@ package com.ssy.ferry.core;
 import android.os.Build;
 import android.os.Looper;
 import android.os.MessageQueue;
-import android.util.Log;
 import android.util.Printer;
+
 
 import java.lang.reflect.Field;
 import java.util.HashSet;
@@ -36,9 +36,7 @@ public class LooperMonitor implements MessageQueue.IdleHandler {
 
         boolean isHasDispatchStart = false;
 
-        boolean isValid() {
-            return false;
-        }
+       abstract boolean isValid();
 
         void dispatchStart() {
             this.isHasDispatchStart = true;
@@ -63,7 +61,6 @@ public class LooperMonitor implements MessageQueue.IdleHandler {
         }
     }
     private static void resetPrinter() {
-        Log.e("haha","resetPrinter");
         final Printer originPrinter = reflectObject(Looper.getMainLooper(), "mLogging");
         Looper.getMainLooper().setMessageLogging(printer = new Printer() {
             boolean isHasChecked = false;

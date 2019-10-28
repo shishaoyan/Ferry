@@ -1,6 +1,6 @@
 package com.ssy.ferry.monitor.util;
 
-import android.util.Log;
+
 
 public class L {
     private static final String DEFAULT_TAG = "Ferry";
