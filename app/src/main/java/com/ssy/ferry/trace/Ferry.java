@@ -13,11 +13,13 @@ public class Ferry {
    public  void start() {
 
         AnrTracer anrTracer = new AnrTracer();
+        EvilMethodTracer evilMethodTracer = new EvilMethodTracer();
 
         UiThreadMonitor.getInstance().init();
         UiThreadMonitor.getInstance().start();
         MethodMonitor.getInstance().start();
         anrTracer.startTrace();
+       evilMethodTracer.startTrace();
 
 
     }

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.ssy.ferry.trace;
+package com.ssy.ferry.util;
 
 import android.util.Log;
 

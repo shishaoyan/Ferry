@@ -6,7 +6,7 @@
 //import android.os.SystemClock;
 //import android.util.Log;
 //
-//import com.ssy.ferry.trace.FerryLog;
+//import com.ssy.ferry.util.FerryLog;
 //
 //
 ///**

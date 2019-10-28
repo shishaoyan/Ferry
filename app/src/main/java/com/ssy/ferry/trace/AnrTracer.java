@@ -9,7 +9,10 @@ import com.ssy.ferry.core.Constants;
 import com.ssy.ferry.core.FerryHandlerThread;
 import com.ssy.ferry.core.MethodMonitor;
 import com.ssy.ferry.core.UiThreadMonitor;
+import com.ssy.ferry.item.MethodItem;
 import com.ssy.ferry.util.DeviceUtil;
+import com.ssy.ferry.util.FerryLog;
+import com.ssy.ferry.util.TraceDataUtils;
 import com.ssy.ferry.util.Utils;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
@@ -58,7 +61,9 @@ public class AnrTracer extends Tracer {
         UiThreadMonitor.getInstance().addObserver(this);
         this.anrHandler = new Handler(FerryHandlerThread.getDefaultHandlerThread().getLooper());
     }
-
+    void stopTrace() {
+        UiThreadMonitor.getInstance().removeObserver(this);
+    }
 
     class AnrHandleTask implements Runnable {
         private String TAG = "AnrHandleTask";

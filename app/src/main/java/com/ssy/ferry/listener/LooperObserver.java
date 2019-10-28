@@ -13,7 +13,7 @@ public abstract class LooperObserver {
         isDispatchBegin = true;
     }
 
-    void doFrame(
+   public void doFrame(
             String focusedActivityName,
             long start,
             long end,

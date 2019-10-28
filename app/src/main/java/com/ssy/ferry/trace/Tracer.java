@@ -8,4 +8,7 @@ import com.ssy.ferry.listener.LooperObserver;
  * @author Mr.S
  */
 public  abstract class Tracer  extends LooperObserver {
+
+
+
 }

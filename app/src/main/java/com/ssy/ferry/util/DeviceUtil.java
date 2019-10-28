@@ -22,8 +22,6 @@ import android.content.Context;
 import android.os.Build;
 import android.os.Debug;
 
-import com.ssy.ferry.trace.FerryLog;
-
 import org.json.JSONException;
 import org.json.JSONObject;
 

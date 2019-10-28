@@ -4,7 +4,7 @@ import android.os.Handler;
 import android.os.HandlerThread;
 import android.os.Looper;
 import android.os.SystemClock;
-import com.ssy.ferry.trace.FerryLog;
+import com.ssy.ferry.util.FerryLog;
 import java.util.HashSet;
 import java.util.Set;
 

@@ -87,7 +87,7 @@ public class UiThreadMonitor extends MonitorLifecycle implements Runnable {
         }
     }
 
-    void removeObserver(LooperObserver observer) {
+    public  void removeObserver(LooperObserver observer) {
         synchronized (observers) {
             observers.remove(observer);
             if (observers.isEmpty()) {
