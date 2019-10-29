@@ -18,7 +18,7 @@ public class Ferry {
         UiThreadMonitor.getInstance().init();
         UiThreadMonitor.getInstance().start();
         MethodMonitor.getInstance().start();
-        anrTracer.startTrace();
+       // anrTracer.startTrace();
        evilMethodTracer.startTrace();
 
 

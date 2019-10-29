@@ -1,6 +1,7 @@
 package com.ssy.ferry.core;
 
 import android.os.SystemClock;
+import android.util.Log;
 
 import com.ssy.ferry.listener.LooperObserver;
 
@@ -27,6 +28,7 @@ public class UiThreadMonitor extends MonitorLifecycle implements Runnable {
     }
 
    public static void dispatchStart() {
+       Log.d("hha","dispatchStart");
         MethodMonitor.i(MethodMonitor.METHOD_ID_DISPATCH);
         dispatchTimeMs[0] = SystemClock.uptimeMillis();
         token = dispatchTimeMs[0];
@@ -42,6 +44,7 @@ public class UiThreadMonitor extends MonitorLifecycle implements Runnable {
     }
 
    public static void dispatchEnd() {
+       Log.d("hha","dispatchEnd");
         MethodMonitor.o(MethodMonitor.METHOD_ID_DISPATCH);
         dispatchTimeMs[1] = SystemClock.uptimeMillis();
         dispatchTimeMs[3] = SystemClock.currentThreadTimeMillis();

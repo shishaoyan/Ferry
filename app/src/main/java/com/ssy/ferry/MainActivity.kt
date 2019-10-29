@@ -29,7 +29,7 @@ class MainActivity : Activity() {
     }
 
     fun c() {
-        Thread.sleep((3000).toLong())
+        Thread.sleep((4300).toLong())
     }
 
     fun d() {
