@@ -1,7 +1,7 @@
 package android.webkit;
 
 import android.content.Context;
-import AttributeSet;
+import android.util.AttributeSet;
 import android.view.View;
 import android.view.ViewDebug;
 import android.view.ViewGroup;

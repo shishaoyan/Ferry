@@ -1,16 +1,19 @@
 package com.ssy.ferry.core;
 
+import android.app.Activity;
 import android.os.Handler;
 import android.os.HandlerThread;
 import android.os.Looper;
 import android.os.SystemClock;
+
 import com.ssy.ferry.util.FerryLog;
+
 import java.util.HashSet;
 import java.util.Set;
 
 public class MethodMonitor extends MonitorLifecycle {
 
-    private static final String TAG = "Matrix.MethodMonitor";
+    private static final String TAG = "Ferry.MethodMonitor";
     private static MethodMonitor sInstance = new MethodMonitor();
     private static final int STATUS_DEFAULT = Integer.MAX_VALUE;
     private static final int STATUS_STARTED = 2;
@@ -35,7 +38,7 @@ public class MethodMonitor extends MonitorLifecycle {
     public static final int METHOD_ID_DISPATCH = METHOD_ID_MAX - 1;
     private static Set<String> sFocusActivitySet = new HashSet<>();
     private static String sFocusedActivity = "default";
-  //  private static HashSet<IAppMethodBeatListener> listeners = new HashSet<>();
+    private static HashSet<IMethodMonitorListener> listeners = new HashSet<>();
     private static Object updateTimeLock = new Object();
     private static boolean isPauseUpdateTime = false;
     private static Runnable checkStartExpiredRunnable = null;
@@ -73,9 +76,8 @@ public class MethodMonitor extends MonitorLifecycle {
 
     public static MethodMonitor getInstance() {
         return sInstance;
-}
+    }
 
-   
 
     public boolean isAlive() {
         return status >= STATUS_STARTED;
@@ -116,7 +118,7 @@ public class MethodMonitor extends MonitorLifecycle {
             }
         }, Constants.DEFAULT_RELEASE_BUFFER_DELAY);
 
-       // ActivityThreadHacker.hackSysHandlerCallback();
+        // ActivityThreadHacker.hackSysHandlerCallback();
         LooperMonitor.register(new LooperMonitor.LooperDispatchListener() {
             @Override
             public boolean isValid() {
@@ -149,6 +151,7 @@ public class MethodMonitor extends MonitorLifecycle {
     private static void dispatchEnd() {
         isPauseUpdateTime = true;
     }
+
 
     /**
      * hook method when it's called in.
@@ -212,35 +215,35 @@ public class MethodMonitor extends MonitorLifecycle {
         }
     }
 
-//    /**
-//     * when the special method calls,it's will be called.
-//     *
-//     * @param activity now at which activity
-//     * @param isFocus  this window if has focus
-//     */
-//    public static void at(Activity activity, boolean isFocus) {
-//        String activityName = activity.getClass().getName();
-//        if (isFocus) {
-//            sFocusedActivity = activityName;
-//            if (sFocusActivitySet.add(activityName)) {
-//                synchronized (listeners) {
-//                    for (IAppMethodBeatListener listener : listeners) {
-//                        listener.onActivityFocused(activityName);
-//                    }
-//                }
-//                FerryLog.i(TAG, "[at] Activity[%s] has %s focus!", activityName, isFocus ? "attach" : "detach");
-//            }
-//        } else {
-//            if (sFocusedActivity.equals(activityName)) {
-//                sFocusedActivity = "default";
-//            }
-//            if (sFocusActivitySet.remove(activityName)) {
-//                FerryLog.i(TAG, "[at] Activity[%s] has %s focus!", activityName, isFocus ? "attach" : "detach");
-//            }
-//        }
-//
-//
-//    }
+    /**
+     * when the special method calls,it's will be called.
+     *
+     * @param activity now at which activity
+     * @param isFocus  this window if has focus
+     */
+    public static void at(Activity activity, boolean isFocus) {
+        String activityName = activity.getClass().getName();
+        if (isFocus) {
+            sFocusedActivity = activityName;
+            if (sFocusActivitySet.add(activityName)) {
+                synchronized (listeners) {
+                    for (IMethodMonitorListener listener : listeners) {
+                        listener.onActivityFocused(activityName);
+                    }
+                }
+                FerryLog.i(TAG, "[at] Activity[%s] has %s focus!", activityName, isFocus ? "attach" : "detach");
+            }
+        } else {
+            if (sFocusedActivity.equals(activityName)) {
+                sFocusedActivity = "default";
+            }
+            if (sFocusActivitySet.remove(activityName)) {
+                FerryLog.i(TAG, "[at] Activity[%s] has %s focus!", activityName, isFocus ? "attach" : "detach");
+            }
+        }
+
+
+    }
 
 
     public static String getFocusedActivity() {
@@ -266,17 +269,17 @@ public class MethodMonitor extends MonitorLifecycle {
         sLastIndex = index;
     }
 
-//    public void addListener(IAppMethodBeatListener listener) {
-//        synchronized (listeners) {
-//            listeners.add(listener);
-//        }
-//    }
-//
-//    public void removeListener(IAppMethodBeatListener listener) {
-//        synchronized (listeners) {
-//            listeners.remove(listener);
-//        }
-//    }
+    public void addListener(IMethodMonitorListener listener) {
+        synchronized (listeners) {
+            listeners.add(listener);
+        }
+    }
+
+    public void removeListener(IMethodMonitorListener listener) {
+        synchronized (listeners) {
+            listeners.remove(listener);
+        }
+    }
 
     private static IndexRecord sIndexRecordHead = null;
 
@@ -334,7 +337,7 @@ public class MethodMonitor extends MonitorLifecycle {
                 if (sBuffer == null) {
                     throw new RuntimeException(TAG + " sBuffer == null");
                 }
-              //  FerryLog.i(TAG, "[onStart] preStatus:%s", status, Utils.getStack());
+                //  FerryLog.i(TAG, "[onStart] preStatus:%s", status, Utils.getStack());
                 this.status = STATUS_STARTED;
             } else {
                 FerryLog.w(TAG, "[onStart] current status:%s", status);
@@ -346,7 +349,7 @@ public class MethodMonitor extends MonitorLifecycle {
     public void stop() {
         synchronized (statusLock) {
             if (status == STATUS_STARTED) {
-              //  FerryLog.i(TAG, "[onStop] %s", Utils.getStack());
+                //  FerryLog.i(TAG, "[onStop] %s", Utils.getStack());
                 this.status = STATUS_STOPPED;
             } else {
                 FerryLog.w(TAG, "[onStop] current status:%s", status);
@@ -354,7 +357,6 @@ public class MethodMonitor extends MonitorLifecycle {
         }
     }
 
-   
 
     public static final class IndexRecord {
         public IndexRecord(int index) {
@@ -443,4 +445,7 @@ public class MethodMonitor extends MonitorLifecycle {
         FerryLog.i(TAG, "[printIndexRecord] %s", ss.toString());
     }
 
+    public interface IMethodMonitorListener {
+        void onActivityFocused(String activityName);
+    }
 }

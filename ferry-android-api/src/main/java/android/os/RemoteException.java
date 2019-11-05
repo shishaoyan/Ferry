@@ -1,6 +1,7 @@
 package android.os;
 
-import AndroidException;
+
+import android.util.AndroidException;
 
 public class RemoteException extends AndroidException {
 

@@ -14,6 +14,7 @@ import com.ssy.ferry.util.DeviceUtil;
 import com.ssy.ferry.util.FerryLog;
 import com.ssy.ferry.util.TraceDataUtils;
 import com.ssy.ferry.util.Utils;
+
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
 
@@ -57,11 +58,14 @@ public class AnrTracer extends Tracer {
         }
     }
 
-    void startTrace() {
+    @Override
+    public void startTrace() {
         UiThreadMonitor.getInstance().addObserver(this);
         this.anrHandler = new Handler(FerryHandlerThread.getDefaultHandlerThread().getLooper());
     }
-    void stopTrace() {
+
+    @Override
+    public void stopTrace() {
         UiThreadMonitor.getInstance().removeObserver(this);
     }
 

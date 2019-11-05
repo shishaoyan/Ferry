@@ -10,7 +10,9 @@ class MainActivity : Activity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
+
         val ferry = Ferry()
+        Ferry.init(this.application)
         ferry.start()
 
         btn.setOnClickListener {
@@ -20,6 +22,9 @@ class MainActivity : Activity() {
 
     }
 
+    override fun onWindowFocusChanged(hasFocus: Boolean) {
+        super.onWindowFocusChanged(hasFocus)
+    }
     fun a() {
         Thread.sleep((300).toLong())
     }

@@ -7,8 +7,10 @@ import com.ssy.ferry.listener.LooperObserver;
  *
  * @author Mr.S
  */
-public  abstract class Tracer  extends LooperObserver {
+public abstract class Tracer extends LooperObserver {
 
+    public abstract void startTrace();
+    public abstract void stopTrace();
 
 
 }

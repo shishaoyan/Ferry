@@ -60,11 +60,13 @@ public class EvilMethodTracer extends Tracer {
 
     }
 
-    void startTrace() {
+    @Override
+    public void startTrace() {
         UiThreadMonitor.getInstance().addObserver(this);
     }
 
-    void stopTrace() {
+    @Override
+    public void stopTrace() {
         UiThreadMonitor.getInstance().removeObserver(this);
     }
 
