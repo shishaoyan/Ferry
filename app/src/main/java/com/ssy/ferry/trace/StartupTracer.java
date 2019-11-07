@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.app.Application;
 import android.os.Bundle;
 import android.os.SystemClock;
+import android.util.Log;
 
 import com.ssy.ferry.core.ActivityThreadHacker;
 import com.ssy.ferry.core.Constants;
@@ -75,6 +76,7 @@ public class StartupTracer extends Tracer implements MethodMonitor.IMethodMonito
 
     @Override
     public void onActivityFocused(String activityName) {
+        Log.d("hha","onActivityFocused");
         long allCost = 0;
         boolean isWarmStartup = false;
         if (isColdStartup()) {
@@ -95,7 +97,7 @@ public class StartupTracer extends Tracer implements MethodMonitor.IMethodMonito
                 }
             }
         } else if (isWarmStartup == isWarmStartUp()) {
-            allCost = SystemClock.uptimeMillis() - ActivityThreadHacker.getsLastLauncherAcitvityTime();
+            allCost = SystemClock.uptimeMillis() - ActivityThreadHacker.getLastLaunchActivityTime();
 
         }
         if (allCost > 0) {
@@ -112,8 +114,8 @@ public class StartupTracer extends Tracer implements MethodMonitor.IMethodMonito
             ActivityThreadHacker.sApplicationCreateBeginMethodIndex.release();
 
         } else if (isWarmStartup && allCost >= warmStartupThresholdMs) {
-            data = MethodMonitor.getInstance().copyData(ActivityThreadHacker.sLastLauncherActivityMethodIndex);
-            ActivityThreadHacker.sLastLauncherActivityMethodIndex.release();
+            data = MethodMonitor.getInstance().copyData(ActivityThreadHacker.sLastLaunchActivityMethodIndex);
+            ActivityThreadHacker.sLastLaunchActivityMethodIndex.release();
         }
 
         FerryHandlerThread.getDefaultHandler().post(new AnalyseTask(data, applicationCost, firstScreenCost, allCost, isWarmStartup, ActivityThreadHacker.sApplicationCreateScene));
@@ -125,7 +127,7 @@ public class StartupTracer extends Tracer implements MethodMonitor.IMethodMonito
      * @return
      */
     private boolean isWarmStartUp() {
-        return activeActivityCount <= 1 && (SystemClock.uptimeMillis() - ActivityThreadHacker.getsLastLauncherAcitvityTime() > Constants.LIMIT_WARM_THRESHOLD_MS ? false : true);
+        return activeActivityCount <= 1 && (SystemClock.uptimeMillis() - ActivityThreadHacker.getLastLaunchActivityTime() > Constants.LIMIT_WARM_THRESHOLD_MS ? false : true);
     }
 
     @Override

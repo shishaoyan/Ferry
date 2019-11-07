@@ -118,7 +118,7 @@ public class MethodMonitor extends MonitorLifecycle {
             }
         }, Constants.DEFAULT_RELEASE_BUFFER_DELAY);
 
-        // ActivityThreadHacker.hackSysHandlerCallback();
+      ActivityThreadHacker.hackSysHandlerCallback();
         LooperMonitor.register(new LooperMonitor.LooperDispatchListener() {
             @Override
             public boolean isValid() {
@@ -234,9 +234,6 @@ public class MethodMonitor extends MonitorLifecycle {
                 FerryLog.i(TAG, "[at] Activity[%s] has %s focus!", activityName, isFocus ? "attach" : "detach");
             }
         } else {
-            if (sFocusedActivity.equals(activityName)) {
-                sFocusedActivity = "default";
-            }
             if (sFocusActivitySet.remove(activityName)) {
                 FerryLog.i(TAG, "[at] Activity[%s] has %s focus!", activityName, isFocus ? "attach" : "detach");
             }
@@ -272,6 +269,11 @@ public class MethodMonitor extends MonitorLifecycle {
     public void addListener(IMethodMonitorListener listener) {
         synchronized (listeners) {
             listeners.add(listener);
+        }
+    }
+    public void clearListener( ) {
+        synchronized (listeners) {
+            listeners.clear();
         }
     }
 

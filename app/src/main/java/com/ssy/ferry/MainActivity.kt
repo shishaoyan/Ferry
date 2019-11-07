@@ -1,7 +1,9 @@
 package com.ssy.ferry
 
 import android.app.Activity
+import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import com.ssy.ferry.trace.Ferry
 import kotlinx.android.synthetic.main.activity_main.*
 
@@ -11,10 +13,11 @@ class MainActivity : Activity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        val ferry = Ferry()
-        Ferry.init(this.application)
-        ferry.start()
 
+        btn_next.setOnClickListener {
+            val intent = Intent(this, SecondActivity::class.java)
+            startActivity(intent)
+        }
         btn.setOnClickListener {
             d()
         }
@@ -41,5 +44,20 @@ class MainActivity : Activity() {
         a();
         b();
         c();
+    }
+
+    override fun onResume() {
+        super.onResume()
+    }
+
+    override fun onPause() {
+        super.onPause()
+        Log.d("haha", "MainActivity onPause")
+
+    }
+
+    override fun onStop() {
+        super.onStop()
+        Log.d("haha", "MainActivity onStop")
     }
 }
